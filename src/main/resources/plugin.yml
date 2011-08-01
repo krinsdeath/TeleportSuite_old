@@ -31,6 +31,9 @@ commands:
   tpreject:
     description: Rejects a teleport request
     usage: /<command> (player)
+  tpcancel:
+    description: Cancels the current request
+    usage: /<command>
   tptoggle:
     description: Turns on/off teleport requests.
     usage: /<command>
@@ -39,6 +42,9 @@ commands:
     usage: /<command>
   requests:
     description: Shows active requests for the user.
+    usage: /<command>
+  cancel:
+    description: Cancels the current request
     usage: /<command>
 
 permissions:
@@ -53,6 +59,7 @@ permissions:
       commandsuite.teleport.tptoggle: true
       commandsuite.teleport.back: true
       commandsuite.teleport.requests: true
+      commandsuite.teleport.tpcancel: true
   teleport.mods:
     description: Grants access to /tp and /tphere
     default: op

@@ -11,7 +11,7 @@ import org.bukkit.util.config.Configuration;
 /**
  *
  * @author krinsdeath
- * @version 1.0.0
+ * @version 1.0.1
  */
 
 public class TeleportSuite extends JavaPlugin {
@@ -56,7 +56,7 @@ public class TeleportSuite extends JavaPlugin {
 				System.out.println("Building " + pdf.getFullName() + " configuration file...");
 				config.setProperty("teleport.message", "Teleporting to &a<player>&f...");
 				config.setProperty("teleport.notice", "&a<player>&f is teleporting to you.");
-				config.setProperty("teleport.request.from", "Teleport request from &a<player>&f.");
+				config.setProperty("teleport.request.from", "Teleport request from &a<player>&f. (Accept with &a/tpaccept <player>&f)");
 				config.setProperty("teleport.request.to", "Awaiting response from &a<player>&f...");
 				config.setProperty("teleport.toggle.allowed", "allowed");
 				config.setProperty("teleport.toggle.denied", "ignored");
@@ -67,8 +67,11 @@ public class TeleportSuite extends JavaPlugin {
 				config.setProperty("request.only_one", "You can only request one teleport at a time.");
 				config.setProperty("request.ignored", "&a<player>&f is not allowing teleport requests.");
 				config.setProperty("request.open.header", "Open requests...");
+				config.setProperty("request.open.self", "Requesting teleport to: &a<player>&f");
 				config.setProperty("request.open.entry", "&a<player>&f");
 				config.setProperty("request.open.none", "You have no requests.");
+				config.setProperty("request.cancel", "You cancelled your teleport to &a<player>&f.");
+				config.setProperty("request.cancelled", "&a<player>&f cancelled their teleport request.");
 				config.setProperty("error.arguments", "&CNot enough arguments.");
 				config.setProperty("error.target", "&CInvalid target.");
 				config.setProperty("error.permission", "&CYou do not have permission for that.");

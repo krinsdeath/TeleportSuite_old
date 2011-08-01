@@ -156,6 +156,10 @@ class Commands implements CommandExecutor {
 				if (check) {
 					TeleportPlayer.accept(player, target);
 					return true;
+				} else {
+					if (args.length == 0) {
+						TeleportPlayer.acceptFirst(player);
+					}
 				}
 			} else {
 				Localization.error("error.permission", player);
@@ -168,6 +172,10 @@ class Commands implements CommandExecutor {
 				if (check) {
 					TeleportPlayer.reject(player, target);
 					return true;
+				} else {
+					if (args.length == 0) {
+						TeleportPlayer.rejectFirst(player);
+					}
 				}
 			} else {
 				Localization.error("error.permission", player);
@@ -212,6 +220,23 @@ class Commands implements CommandExecutor {
 					for (String line : tp.requests()) {
 						player.sendMessage(Localization.getString("request.open.entry", line));
 					}
+					if (TeleportPlayer.active.containsKey(player.getName())) {
+						player.sendMessage(Localization.getString("request.open.self", TeleportPlayer.active.get(player.getName()).getName()));
+					}
+				}
+			} else {
+				Localization.error("error.permission", player);
+			}
+		}
+
+		// handler for '/cancel'
+		if (cmd.getName().equalsIgnoreCase("cancel")) {
+			if (sender.hasPermission("commandsuite.teleport.tpcancel")) {
+				if (TeleportPlayer.active.containsKey(player.getName())) {
+					player.sendMessage(Localization.getString("request.cancel", TeleportPlayer.active.get(player.getName()).getName()));
+					server.getPlayer(TeleportPlayer.active.get(player.getName()).getName()).sendMessage(Localization.getString("request.cancelled", player.getName()));
+					TeleportPlayer.players.get(TeleportPlayer.active.get(player.getName()).getName()).finish(player);
+					TeleportPlayer.active.remove(player.getName());
 				}
 			} else {
 				Localization.error("error.permission", player);

@@ -89,15 +89,32 @@ public class TeleportPlayer implements Serializable {
 		players.put(from.getName(), accept);
 	}
 
+	public static void acceptFirst(Player player) {
+		if (TeleportPlayer.getPlayer(player).requests().isEmpty()) {
+			return;
+		} else {
+			accept(player, server.getPlayer(TeleportPlayer.getPlayer(player).requests().get(0)));
+		}
+	}
+
 	public static void reject(Player from, Player to) {
 		if (getPlayer(from).requests().contains(to.getName())) {
 			active.remove(to.getName());
 			from.sendMessage(Localization.getString("request.deny", to.getName()));
 			to.sendMessage(Localization.getString("request.denied", from.getName()));
 			getPlayer(from).finish(to);
+			requesting.remove(to.getName());
 			return;
 		} else {
 			to.sendMessage(Localization.getString("request.none", from.getName()));
+		}
+	}
+
+	public static void rejectFirst(Player player) {
+		if (TeleportPlayer.getPlayer(player).requests().isEmpty()) {
+			return;
+		} else {
+			reject(player, server.getPlayer(TeleportPlayer.getPlayer(player).requests().get(0)));
 		}
 	}
 
