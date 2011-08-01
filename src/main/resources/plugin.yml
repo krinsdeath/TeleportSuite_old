@@ -66,6 +66,7 @@ permissions:
     children:
       commandsuite.teleport.tp: true
       commandsuite.teleport.tphere: true
+      commandsuite.teleport.tploc: true
   teleport.admins:
     description: Grants access to /tpo and /tpohere
     default: false

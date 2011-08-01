@@ -48,7 +48,6 @@ public class TeleportSuite extends JavaPlugin {
 
 	private void setup() {
 		if (!versionMatch() || config.getBoolean("plugin.rebuild", false)) {
-			config.setProperty("plugin.version", pdf.getVersion());
 			if (config.getProperty("plugin.rebuild") == null) {
 				config.setProperty("plugin.rebuild", true);
 			}
@@ -79,9 +78,22 @@ public class TeleportSuite extends JavaPlugin {
 				config.setProperty("error.params", "&CInvalid parameters.");
 				config.setProperty("error.destination", "&CInvalid destination.");
 				config.setProperty("plugin.rebuild", false);
+				config.setProperty("plugin.version", pdf.getVersion());
 				config.save();
 				System.out.println("... done.");
 			}
+			if (!config.getString("plugin.version").equalsIgnoreCase(pdf.getVersion())) {
+				try {
+					int cf = Integer.parseInt(config.getString("plugin.version").split("\\.")[2]);
+					int cr = Integer.parseInt(config.getString("plugin.version").split("\\.")[1]);
+					int cv = Integer.parseInt(config.getString("plugin.version").split("\\.")[0]);
+					update(cf, cr, cv);
+				} catch (NumberFormatException e) {
+					System.out.println("You changed the version number..");
+					System.out.println("Some features may not be added.");
+				}
+			}
+			config.setProperty("plugin.version", pdf.getVersion());
 		}
 		config.load();
 	}
@@ -92,6 +104,24 @@ public class TeleportSuite extends JavaPlugin {
 		} else {
 			return false;
 		}
+	}
+
+	private void update(int f, int r, int v) {
+		int fix = Integer.parseInt(pdf.getVersion().split("\\.")[2]);
+		int rev = Integer.parseInt(pdf.getVersion().split("\\.")[1]);
+		int ver = Integer.parseInt(pdf.getVersion().split("\\.")[0]);
+		if (ver == 1 && v <= ver) {
+			if (rev == 0 && r <= rev) {
+				if (fix >= 1 && f < fix) {
+					config.setProperty("request.cancel", "You cancelled your teleport to &a<player>&f.");
+					config.setProperty("request.cancelled", "&a<player>&f cancelled their teleport request.");
+				}
+				if (fix >= 2 && f < fix) {
+					
+				}
+			}
+		}
+
 	}
 
 }

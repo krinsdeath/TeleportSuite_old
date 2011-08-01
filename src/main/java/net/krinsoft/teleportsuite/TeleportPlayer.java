@@ -186,7 +186,7 @@ public class TeleportPlayer implements Serializable {
 		setLastKnown(player.getLocation());
 	}
 
-	private void setLastKnown(Location location) {
+	public final void setLastKnown(Location location) {
 		this.x = location.getX();
 		this.y = location.getY();
 		this.z = location.getZ();

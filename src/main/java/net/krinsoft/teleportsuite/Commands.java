@@ -245,7 +245,7 @@ class Commands implements CommandExecutor {
 
 		// handler for '/tploc'
 		if (cmd.getName().equalsIgnoreCase("tploc") && args.length == 3) {
-			if (sender.hasPermission("commandsuite.teleport.location")) {
+			if (sender.hasPermission("commandsuite.teleport.tploc")) {
 				double x = 0, y = 0, z = 0;
 				float yaw = player.getLocation().getYaw(), pitch = player.getLocation().getPitch();
 				try {
@@ -258,6 +258,7 @@ class Commands implements CommandExecutor {
 				}
 				Location loc = new Location(player.getWorld(), x, y, z, yaw, pitch);
 				if (player.getWorld().getBlockAt(loc).getRelative(BlockFace.UP).getType().equals(Material.AIR)) {
+					TeleportPlayer.getPlayer(player).setLastKnown(player.getLocation());
 					player.teleport(loc);
 				} else {
 					Localization.error("error.destination", player);
