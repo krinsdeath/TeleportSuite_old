@@ -1,0 +1,74 @@
+name: TeleportSuite
+main: net.krinsoft.teleportsuite.TeleportSuite
+version: ${project.version}
+author: krinsdeath
+
+commands:
+  tploc:
+    description: Teleports the sender to the specified location on his world
+    usage: /<command> x y z
+  tp:
+    description: Teleports the sender to the target
+    usage: /<command> (player)
+  tphere:
+    description: Teleports the target to the sender
+    usage: /<command> (player)
+  tpa:
+    description: Asks the target if the sender can teleport to them
+    usage: /<command> (player)
+  tpahere:
+    description: Asks the target if they want to teleport to the sender
+    usage: /<command> (player)
+  tpo:
+    description: Teleports the sender to the target, regardless of their toggle state
+    usage: /<command (player)
+  tpohere:
+    description: Teleports the target to the sender, regardless of their toggle state
+    usage: /<command> (player)
+  tpaccept:
+    description: Accepts a teleport request
+    usage: /<command> (player)
+  tpreject:
+    description: Rejects a teleport request
+    usage: /<command> (player)
+  tptoggle:
+    description: Turns on/off teleport requests.
+    usage: /<command>
+  back:
+    description: Teleports the sender to their location prior to their last teleport
+    usage: /<command>
+  requests:
+    description: Shows active requests for the user.
+    usage: /<command>
+
+permissions:
+  teleport.users:
+    description: Grants access to /tpa, /tpahere, /tpaccept, /tpreject, and /tptoggle
+    default: true
+    children:
+      commandsuite.teleport.tpa: true
+      commandsuite.teleport.tpahere: true
+      commandsuite.teleport.tpaccept: true
+      commandsuite.teleport.tpreject: true
+      commandsuite.teleport.tptoggle: true
+      commandsuite.teleport.back: true
+      commandsuite.teleport.requests: true
+  teleport.mods:
+    description: Grants access to /tp and /tphere
+    default: op
+    children:
+      commandsuite.teleport.tp: true
+      commandsuite.teleport.tphere: true
+  teleport.admins:
+    description: Grants access to /tpo and /tpohere
+    default: false
+    children:
+      commandsuite.teleport.tpo: true
+      commandsuite.teleport.tpohere: true
+  teleport.*:
+    description: Grants all-access
+    default: false
+    children:
+      teleport.users: true
+      teleport.mods: true
+      teleport.admins: true
