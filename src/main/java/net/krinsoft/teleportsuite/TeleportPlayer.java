@@ -32,9 +32,15 @@ public class TeleportPlayer implements Serializable {
 	protected static List<String> requesting = new ArrayList<String>();
 	protected static Server server;
 
-	public static void init(TeleportSuite inst) {
+	protected static void init(TeleportSuite inst) {
 		server = inst.getServer();
+	}
 
+	protected static void clean() {
+		players = null;
+		active = null;
+		requesting = null;
+		server = null;
 	}
 
 	/**

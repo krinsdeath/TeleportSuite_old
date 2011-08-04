@@ -18,11 +18,6 @@ import org.bukkit.entity.Player;
  */
 
 class Commands implements CommandExecutor {
-	private TeleportSuite plugin;
-
-	public Commands(TeleportSuite inst) {
-		plugin = inst;
-	}
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {

@@ -11,11 +11,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
  */
 
 class Players extends PlayerListener {
-	private TeleportSuite plugin;
-
-	public Players(TeleportSuite inst) {
-		plugin = inst;
-	}
 
 	@Override
 	public void onPlayerJoin(PlayerJoinEvent event) {

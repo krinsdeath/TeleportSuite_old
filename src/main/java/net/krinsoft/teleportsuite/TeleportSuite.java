@@ -11,7 +11,7 @@ import org.bukkit.util.config.Configuration;
 /**
  *
  * @author krinsdeath
- * @version 1.0.1
+ * @version 1.0.2
  */
 
 public class TeleportSuite extends JavaPlugin {
@@ -19,8 +19,8 @@ public class TeleportSuite extends JavaPlugin {
 	protected static PluginManager pm;
 	protected static Configuration config;
 
-	private final Commands cmds = new Commands(this);
-	private final Players pListener = new Players(this);
+	private final Commands cmds = new Commands();
+	private final Players pListener = new Players();
 
 	@Override
 	public void onEnable() {
@@ -33,12 +33,16 @@ public class TeleportSuite extends JavaPlugin {
 		TeleportPlayer.init(this);
 		setup();
 		Localization.setConfig(config);
-		System.out.println(pdf.getFullName() + " (by " + pdf.getAuthors().toString() + ") is enabled.");
+		System.out.println(pdf.getFullName() + " (by " + pdf.getAuthors().toString().replaceAll("([\\[\\]])", "") + ") is enabled.");
 	}
 
 	@Override
 	public void onDisable() {
-		System.out.println(pdf.getFullName() + " (by " + pdf.getAuthors().toString() + ") is disabled.");
+		TeleportPlayer.clean();
+		System.out.println(pdf.getFullName() + " (by " + pdf.getAuthors().toString().replaceAll("([\\[\\]])", "") + ") is disabled.");
+		pm = null;
+		pdf = null;
+		config = null;
 	}
 
 	@Override
@@ -52,7 +56,8 @@ public class TeleportSuite extends JavaPlugin {
 				config.setProperty("plugin.rebuild", true);
 			}
 			if (config.getBoolean("plugin.rebuild", false)) {
-				System.out.println("Building " + pdf.getFullName() + " configuration file...");
+				System.out.println(pdf.getFullName() + " detected first run.");
+				System.out.println("Building configuration file...");
 				config.setProperty("teleport.message", "Teleporting to &a<player>&f...");
 				config.setProperty("teleport.notice", "&a<player>&f is teleporting to you.");
 				config.setProperty("teleport.request.from", "Teleport request from &a<player>&f. (Accept with &a/tpaccept <player>&f)");
@@ -69,8 +74,6 @@ public class TeleportSuite extends JavaPlugin {
 				config.setProperty("request.open.self", "Requesting teleport to: &a<player>&f");
 				config.setProperty("request.open.entry", "&a<player>&f");
 				config.setProperty("request.open.none", "You have no requests.");
-				config.setProperty("request.cancel", "You cancelled your teleport to &a<player>&f.");
-				config.setProperty("request.cancelled", "&a<player>&f cancelled their teleport request.");
 				config.setProperty("error.arguments", "&CNot enough arguments.");
 				config.setProperty("error.target", "&CInvalid target.");
 				config.setProperty("error.permission", "&CYou do not have permission for that.");
@@ -78,7 +81,7 @@ public class TeleportSuite extends JavaPlugin {
 				config.setProperty("error.params", "&CInvalid parameters.");
 				config.setProperty("error.destination", "&CInvalid destination.");
 				config.setProperty("plugin.rebuild", false);
-				config.setProperty("plugin.version", pdf.getVersion());
+				config.setProperty("plugin.version", "1.0.0");
 				config.save();
 				System.out.println("... done.");
 			}
@@ -94,6 +97,7 @@ public class TeleportSuite extends JavaPlugin {
 				}
 			}
 			config.setProperty("plugin.version", pdf.getVersion());
+			config.save();
 		}
 		config.load();
 	}
@@ -117,7 +121,7 @@ public class TeleportSuite extends JavaPlugin {
 					config.setProperty("request.cancelled", "&a<player>&f cancelled their teleport request.");
 				}
 				if (fix >= 2 && f < fix) {
-					
+					System.out.println("Config updated to " + pdf.getVersion() + ". Finalizing...");
 				}
 			}
 		}
