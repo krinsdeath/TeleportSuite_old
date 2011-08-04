@@ -8,7 +8,7 @@ import org.bukkit.util.config.Configuration;
  * @author krinsdeath
  */
 
-public class Localization {
+class Localization {
 	private static Configuration config;
 
 	public static void setConfig(Configuration conf) {
@@ -28,4 +28,5 @@ public class Localization {
 		msg = msg.replaceAll("&([a-fA-F0-9])", "\u00A7$1");
 		player.sendMessage(msg);
 	}
+
 }

@@ -121,7 +121,6 @@ public class TeleportSuite extends JavaPlugin {
 				}
 			}
 		}
-
 	}
 
 }
