@@ -6,45 +6,60 @@ author: krinsdeath
 commands:
   tploc:
     description: Teleports the sender to the specified location on his world
-    usage: /<command> x y z
+    permission: commandsuite.teleport.tploc
+    usage: /<command> x y z [world]
   tp:
     description: Teleports the sender to the target
+    permission: commandsuite.teleport.tp
     usage: /<command> (player)
   tphere:
     description: Teleports the target to the sender
+    permission: commandsuite.teleport.tphere
     usage: /<command> (player)
   tpa:
     description: Asks the target if the sender can teleport to them
+    permission: commandsuite.teleport.tpa
     usage: /<command> (player)
   tpahere:
     description: Asks the target if they want to teleport to the sender
+    permission: commandsuite.teleport.tpahere
     usage: /<command> (player)
   tpo:
     description: Teleports the sender to the target, regardless of their toggle state
+    permission: commandsuite.teleport.tpo
     usage: /<command (player)
   tpohere:
     description: Teleports the target to the sender, regardless of their toggle state
+    permission: commandsuite.teleport.tpohere
     usage: /<command> (player)
   tpaccept:
     description: Accepts a teleport request
+    permission: commandsuite.teleport.tpaccept
     usage: /<command> (player)
   tpreject:
     description: Rejects a teleport request
+    permission: commandsuite.teleport.tpreject
     usage: /<command> (player)
   tpcancel:
     description: Cancels the current request
+    permission: commandsuite.teleport.tpcancel
     usage: /<command>
   tptoggle:
     description: Turns on/off teleport requests.
+    permission: commandsuite.teleport.tptoggle
     usage: /<command>
   back:
     description: Teleports the sender to their location prior to their last teleport
+    permission: commandsuite.teleport.back
     usage: /<command>
   requests:
     description: Shows active requests for the user.
+    permission: commandsuite.teleport.requests
     usage: /<command>
-  cancel:
-    description: Cancels the current request
+  loc:
+    aliases: [whereami, where]
+    description: Displays your current location
+    permission: commandsuite.teleport.loc
     usage: /<command>
 
 permissions:
@@ -60,6 +75,7 @@ permissions:
       commandsuite.teleport.back: true
       commandsuite.teleport.requests: true
       commandsuite.teleport.tpcancel: true
+      commandsuite.teleport.loc: true
   teleport.mods:
     description: Grants access to /tp and /tphere
     default: op
@@ -73,6 +89,7 @@ permissions:
     children:
       commandsuite.teleport.tpo: true
       commandsuite.teleport.tpohere: true
+      commandsuite.teleport.world.*: true
   teleport.*:
     description: Grants all-access
     default: false

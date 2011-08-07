@@ -85,7 +85,7 @@ public class TeleportSuite extends JavaPlugin {
 				config.save();
 				System.out.println("... done.");
 			}
-			if (!config.getString("plugin.version").equalsIgnoreCase(pdf.getVersion())) {
+			if (!versionMatch()) {
 				try {
 					int cf = Integer.parseInt(config.getString("plugin.version").split("\\.")[2]);
 					int cr = Integer.parseInt(config.getString("plugin.version").split("\\.")[1]);
@@ -111,6 +111,7 @@ public class TeleportSuite extends JavaPlugin {
 	}
 
 	private void update(int f, int r, int v) {
+		System.out.println("Updating " + pdf.getFullName() + " to latest version.");
 		int fix = Integer.parseInt(pdf.getVersion().split("\\.")[2]);
 		int rev = Integer.parseInt(pdf.getVersion().split("\\.")[1]);
 		int ver = Integer.parseInt(pdf.getVersion().split("\\.")[0]);
@@ -120,7 +121,9 @@ public class TeleportSuite extends JavaPlugin {
 					config.setProperty("request.cancel", "You cancelled your teleport to &a<player>&f.");
 					config.setProperty("request.cancelled", "&a<player>&f cancelled their teleport request.");
 				}
-				if (fix >= 2 && f < fix) {
+				if (fix >= 3 && f < fix) {
+					config.setProperty("error.invalid_world", "&CInvalid world.");
+					config.setProperty("message.location", "You are currently at (&b<x>&f, &b<y>&f, &b<z>&f) in &a<world>&f");
 					System.out.println("Config updated to " + pdf.getVersion() + ". Finalizing...");
 				}
 			}

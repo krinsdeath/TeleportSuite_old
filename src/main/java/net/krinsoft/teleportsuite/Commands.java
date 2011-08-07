@@ -5,6 +5,7 @@ import net.krinsoft.teleportsuite.TeleportPlayer.Teleport;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Server;
+import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -31,7 +32,7 @@ class Commands implements CommandExecutor {
 			TeleportPlayer.addPlayer(player);
 		}
 
-		if (args.length > 0 && args.length != 3) {
+		if (args.length > 0 && args.length != 3 && args.length != 4) {
 			target = server.getPlayer(args[0]);
 			if (target != null && target != player) {
 				if (TeleportPlayer.getPlayer(target) == null) {
@@ -132,7 +133,7 @@ class Commands implements CommandExecutor {
 		if (cmd.getName().equalsIgnoreCase("tpohere")) {
 			if (sender.hasPermission("commandsuite.teleport.tpohere")) {
 				if (args.length < 1) {
-					player.sendMessage("Not enough arguments.");
+					Localization.error("error.arguments", player);
 					return false;
 				} else {
 					if (check) {
@@ -225,7 +226,7 @@ class Commands implements CommandExecutor {
 		}
 
 		// handler for '/cancel'
-		if (cmd.getName().equalsIgnoreCase("cancel")) {
+		if (cmd.getName().equalsIgnoreCase("tpcancel")) {
 			if (sender.hasPermission("commandsuite.teleport.tpcancel")) {
 				if (TeleportPlayer.active.containsKey(player.getName())) {
 					player.sendMessage(Localization.getString("request.cancel", TeleportPlayer.active.get(player.getName()).getName()));
@@ -239,8 +240,22 @@ class Commands implements CommandExecutor {
 		}
 
 		// handler for '/tploc'
-		if (cmd.getName().equalsIgnoreCase("tploc") && args.length == 3) {
+		if (cmd.getName().equalsIgnoreCase("tploc") && args.length >= 3) {
 			if (sender.hasPermission("commandsuite.teleport.tploc")) {
+				World w = player.getWorld();
+				if (args.length > 3) {
+					w = player.getServer().getWorld(args[3]);
+					if (w != null) {
+						if (player.hasPermission("commandsuite.teleport.world." + w.getName()) || player.hasPermission("commandsuite.teleport.world.*")) {
+						} else {
+							Localization.error("error.permission", player);
+							return true;
+						}
+					} else {
+						Localization.error("error.invalid_world", player);
+						return true;
+					}
+				}
 				double x = 0, y = 0, z = 0;
 				float yaw = player.getLocation().getYaw(), pitch = player.getLocation().getPitch();
 				try {
@@ -251,8 +266,8 @@ class Commands implements CommandExecutor {
 					Localization.error("error.params", player);
 					return false;
 				}
-				Location loc = new Location(player.getWorld(), x, y, z, yaw, pitch);
-				if (player.getWorld().getBlockAt(loc).getRelative(BlockFace.UP).getType().equals(Material.AIR)) {
+				Location loc = new Location(w, x, y, z, yaw, pitch);
+				if (w.getBlockAt(loc).getRelative(BlockFace.UP).getType().equals(Material.AIR)) {
 					TeleportPlayer.getPlayer(player).setLastKnown(player.getLocation());
 					player.teleport(loc);
 				} else {
@@ -260,6 +275,17 @@ class Commands implements CommandExecutor {
 				}
 			} else {
 				Localization.error("error.permission", player);
+			}
+		}
+
+		if (cmd.getName().equalsIgnoreCase("loc")) {
+			if (player.hasPermission("commandsuite.teleport.loc")) {
+				Location l = player.getLocation();
+				Localization.message("message.location", l.getWorld().getName(), l.getX(), l.getY(), l.getZ(), player);
+				player.sendMessage("Your present location (" + l.getWorld().getName() + "): ");
+				player.sendMessage("X: " + l.getX());
+				player.sendMessage("Y: " + l.getY());
+				player.sendMessage("Z: " + l.getZ());
 			}
 		}
 

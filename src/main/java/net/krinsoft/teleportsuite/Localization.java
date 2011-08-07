@@ -35,4 +35,13 @@ class Localization {
 		return COLOR.matcher(msg).replaceAll("\u00A7$1");
 	}
 
+	static void message(String path, String name, double x, double y, double z, Player p) {
+		String msg = config.getString(path, "not null");
+		msg = msg.replaceAll("<world>", name);
+		msg = msg.replaceAll("<x>", "" + (int) x);
+		msg = msg.replaceAll("<y>", "" + (int) y);
+		msg = msg.replaceAll("<z>", "" + (int) z);
+		p.sendMessage(msg);
+	}
+
 }

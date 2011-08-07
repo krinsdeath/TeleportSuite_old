@@ -4,11 +4,16 @@
     <groupId>net.krinsoft</groupId>
     <artifactId>TeleportSuite</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
     <name>TeleportSuite</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+    <scm>
+        <developerConnection>scm:git:git@github.com:krinsdeath/TeleportSuite.git</developerConnection>
+        <connection>scm:git:git://github.com/krinsdeath/TeleportSuite.git</connection>
+        <url>https://github.com/krinsdeath/TeleportSuite</url>
+    </scm>
     <build>
         <plugins>
             <plugin>

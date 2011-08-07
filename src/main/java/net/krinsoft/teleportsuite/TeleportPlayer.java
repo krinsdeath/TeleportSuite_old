@@ -198,7 +198,7 @@ public class TeleportPlayer implements Serializable {
 					from.sendMessage(Localization.getString("request.ignored", to.getName()));
 				}
 			} else {
-				if (priority == Priority.COMMAND) {
+				if (priority == Priority.COMMAND || priority == Priority.OVERRIDE) {
 					active.put(from.getName(), new Request(to.getName(), type));
 					getPlayer(to).request(from);
 					accept(to, from);
