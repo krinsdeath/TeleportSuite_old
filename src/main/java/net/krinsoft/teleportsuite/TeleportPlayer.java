@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
  */
 
 public class TeleportPlayer implements Serializable {
+
 	public enum Teleport {
 		TO,
 		HERE;
@@ -72,6 +73,11 @@ public class TeleportPlayer implements Serializable {
 		return players.get(player.getName());
 	}
 
+	public static void cancel(String name) {
+		active.remove(name);
+		requesting.remove(name);
+	}
+
 	/**
 	 * Toggles the requests feature for the specified player
 	 * @param player
@@ -97,15 +103,15 @@ public class TeleportPlayer implements Serializable {
 				Request t = active.get(to.getName());
 				if (t.getType() == Teleport.HERE) {
 					accept.setLastKnown(from.getLocation());
-					from.sendMessage(Localization.getString("teleport.message", to.getName()));
-					to.sendMessage(Localization.getString("teleport.notice", from.getName()));
+					Localization.message("teleport.message", to.getName(), from);
+					Localization.message("teleport.notice", from.getName(), to);
 					from.teleport(to.getLocation());
 					accept.finish(to);
 					active.remove(to.getName());
 				} else if (t.getType() == Teleport.TO) {
 					getPlayer(to).setLastKnown(to.getLocation());
-					to.sendMessage(Localization.getString("teleport.message", from.getName()));
-					from.sendMessage(Localization.getString("teleport.notice", to.getName()));
+					Localization.message("teleport.message", from.getName(), to);
+					Localization.message("teleport.notice", to.getName(), from);
 					to.teleport(from.getLocation());
 					getPlayer(to).finish(from);
 					active.remove(to.getName());
@@ -301,7 +307,7 @@ public class TeleportPlayer implements Serializable {
 	public TeleportPlayer(Player player) {
 		this.name = player.getName();
 		this.world = player.getWorld().getName();
-		this.toggle = false;
+		this.toggle = Localization.getBoolean("teleport.toggle.default", false);
 		setLastKnown(player.getLocation());
 	}
 

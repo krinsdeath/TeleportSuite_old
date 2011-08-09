@@ -58,30 +58,30 @@ public class TeleportSuite extends JavaPlugin {
 			if (config.getBoolean("plugin.rebuild", false)) {
 				System.out.println(pdf.getFullName() + " detected first run.");
 				System.out.println("Building configuration file...");
-				config.setProperty("teleport.message", "Teleporting to &a<player>&f...");
-				config.setProperty("teleport.notice", "&a<player>&f is teleporting to you.");
-				config.setProperty("teleport.request.from", "Teleport request from &a<player>&f. (Accept with &a/tpaccept <player>&f)");
-				config.setProperty("teleport.request.to", "Awaiting response from &a<player>&f...");
-				config.setProperty("teleport.toggle.allowed", "allowed");
-				config.setProperty("teleport.toggle.denied", "ignored");
-				config.setProperty("teleport.toggle.message", "Teleport requests will be <flag>.");
-				config.setProperty("request.none", "You have no request from &a<player>&f!");
-				config.setProperty("request.deny", "You denied &a<player>&f's teleport request.");
-				config.setProperty("request.denied", "&a<player>&f denied your teleport request.");
-				config.setProperty("request.only_one", "You can only request one teleport at a time.");
-				config.setProperty("request.ignored", "&a<player>&f is not allowing teleport requests.");
-				config.setProperty("request.open.header", "Open requests...");
-				config.setProperty("request.open.self", "Requesting teleport to: &a<player>&f");
-				config.setProperty("request.open.entry", "&a<player>&f");
-				config.setProperty("request.open.none", "You have no requests.");
-				config.setProperty("error.arguments", "&CNot enough arguments.");
-				config.setProperty("error.target", "&CInvalid target.");
-				config.setProperty("error.permission", "&CYou do not have permission for that.");
-				config.setProperty("error.no_location", "&CYou haven't teleported yet.");
-				config.setProperty("error.params", "&CInvalid parameters.");
-				config.setProperty("error.destination", "&CInvalid destination.");
+				config.getString("teleport.message", "Teleporting to &a<player>&f...");
+				config.getString("teleport.notice", "&a<player>&f is teleporting to you.");
+				config.getString("teleport.request.from", "Teleport request from &a<player>&f. (Accept with &a/tpaccept <player>&f)");
+				config.getString("teleport.request.to", "Awaiting response from &a<player>&f...");
+				config.getString("teleport.toggle.allowed", "allowed");
+				config.getString("teleport.toggle.denied", "ignored");
+				config.getString("teleport.toggle.message", "Teleport requests will be <flag>.");
+				config.getString("request.none", "You have no request from &a<player>&f!");
+				config.getString("request.deny", "You denied &a<player>&f's teleport request.");
+				config.getString("request.denied", "&a<player>&f denied your teleport request.");
+				config.getString("request.only_one", "You can only request one teleport at a time.");
+				config.getString("request.ignored", "&a<player>&f is not allowing teleport requests.");
+				config.getString("request.open.header", "Open requests...");
+				config.getString("request.open.self", "Requesting teleport to: &a<player>&f");
+				config.getString("request.open.entry", "&a<player>&f");
+				config.getString("request.open.none", "You have no requests.");
+				config.getString("error.arguments", "&CNot enough arguments.");
+				config.getString("error.target", "&CInvalid target.");
+				config.getString("error.permission", "&CYou do not have permission for that.");
+				config.getString("error.no_location", "&CYou haven't teleported yet.");
+				config.getString("error.params", "&CInvalid parameters.");
+				config.getString("error.destination", "&CInvalid destination.");
 				config.setProperty("plugin.rebuild", false);
-				config.setProperty("plugin.version", "1.0.0");
+				config.getString("plugin.version", "1.0.0");
 				config.save();
 				System.out.println("... done.");
 			}
@@ -92,8 +92,7 @@ public class TeleportSuite extends JavaPlugin {
 					int cv = Integer.parseInt(config.getString("plugin.version").split("\\.")[0]);
 					update(cf, cr, cv);
 				} catch (NumberFormatException e) {
-					System.out.println("You changed the version number..");
-					System.out.println("Some features may not be added.");
+					System.out.println("You changed the version number. Some features may not be added.");
 				}
 			}
 			config.setProperty("plugin.version", pdf.getVersion());
@@ -118,12 +117,15 @@ public class TeleportSuite extends JavaPlugin {
 		if (ver == 1 && v <= ver) {
 			if (rev == 0 && r <= rev) {
 				if (fix >= 1 && f < fix) {
-					config.setProperty("request.cancel", "You cancelled your teleport to &a<player>&f.");
-					config.setProperty("request.cancelled", "&a<player>&f cancelled their teleport request.");
+					config.getString("request.cancel", "You cancelled your teleport to &a<player>&f.");
+					config.getString("request.cancelled", "&a<player>&f cancelled their teleport request.");
 				}
 				if (fix >= 3 && f < fix) {
-					config.setProperty("error.invalid_world", "&CInvalid world.");
-					config.setProperty("message.location", "You are currently at (&b<x>&f, &b<y>&f, &b<z>&f) in &a<world>&f");
+					config.getString("error.invalid_world", "&CInvalid world");
+					config.getString("message.location", "You are currently at (&b<x>&f, &b<y>&f, &b<z>&f) in &a<world>&f.");
+				}
+				if (fix >= 4 && f < fix) {
+					config.setProperty("teleport.toggle.default", false);
 					System.out.println("Config updated to " + pdf.getVersion() + ". Finalizing...");
 				}
 			}

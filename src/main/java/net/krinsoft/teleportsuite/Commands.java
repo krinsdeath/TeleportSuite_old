@@ -198,7 +198,7 @@ class Commands implements CommandExecutor {
 			if (sender.hasPermission("commandsuite.teleport.tptoggle")) {
 				TeleportPlayer.toggle(player);
 				String msg = (!TeleportPlayer.getPlayer(player).isToggled()) ? Localization.getString("teleport.toggle.allowed", "") : Localization.getString("teleport.toggle.denied", "");
-				player.sendMessage(Localization.getString("teleport.toggle.message", msg));
+				Localization.message("teleport.toggle.message", msg, player);
 				return true;
 			} else {
 				Localization.error("error.permission", player);
@@ -210,14 +210,14 @@ class Commands implements CommandExecutor {
 			if (sender.hasPermission("commandsuite.teleport.requests")) {
 				TeleportPlayer tp = TeleportPlayer.getPlayer(player);
 				if (tp.requests().isEmpty()) {
-					player.sendMessage(Localization.getString("request.open.none", ""));
+					Localization.message("request.open.none", "", player);
 				} else {
-					player.sendMessage(Localization.getString("request.open.header", player.getName()));
+					Localization.message("request.open.header", player.getName(), player);
 					for (String line : tp.requests()) {
-						player.sendMessage(Localization.getString("request.open.entry", line));
+						Localization.message("request.open.entry", line, player);
 					}
 					if (TeleportPlayer.active.containsKey(player.getName())) {
-						player.sendMessage(Localization.getString("request.open.self", TeleportPlayer.active.get(player.getName()).getName()));
+						Localization.message("request.open.self", TeleportPlayer.active.get(player.getName()).getName(), player);
 					}
 				}
 			} else {
@@ -229,10 +229,10 @@ class Commands implements CommandExecutor {
 		if (cmd.getName().equalsIgnoreCase("tpcancel")) {
 			if (sender.hasPermission("commandsuite.teleport.tpcancel")) {
 				if (TeleportPlayer.active.containsKey(player.getName())) {
-					player.sendMessage(Localization.getString("request.cancel", TeleportPlayer.active.get(player.getName()).getName()));
-					server.getPlayer(TeleportPlayer.active.get(player.getName()).getName()).sendMessage(Localization.getString("request.cancelled", player.getName()));
+					Localization.message("request.cancel", TeleportPlayer.active.get(player.getName()).getName(), player);
+					Localization.message("request.cancelled", player.getName(), server.getPlayer(TeleportPlayer.active.get(player.getName()).getName()));
 					TeleportPlayer.players.get(TeleportPlayer.active.get(player.getName()).getName()).finish(player);
-					TeleportPlayer.active.remove(player.getName());
+					TeleportPlayer.cancel(player.getName());
 				}
 			} else {
 				Localization.error("error.permission", player);
@@ -282,10 +282,6 @@ class Commands implements CommandExecutor {
 			if (player.hasPermission("commandsuite.teleport.loc")) {
 				Location l = player.getLocation();
 				Localization.message("message.location", l.getWorld().getName(), l.getX(), l.getY(), l.getZ(), player);
-				player.sendMessage("Your present location (" + l.getWorld().getName() + "): ");
-				player.sendMessage("X: " + l.getX());
-				player.sendMessage("Y: " + l.getY());
-				player.sendMessage("Z: " + l.getZ());
 			}
 		}
 
