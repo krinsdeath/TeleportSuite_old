@@ -9,27 +9,25 @@ import org.bukkit.event.player.PlayerQuitEvent;
  *
  * @author krinsdeath
  */
-
 class Players extends PlayerListener {
 
-	@Override
-	public void onPlayerJoin(PlayerJoinEvent event) {
-		if (TeleportPlayer.getPlayer(event.getPlayer()) == null) {
-			TeleportPlayer.addPlayer(event.getPlayer());
-		}
-	}
+    @Override
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        if (TeleportPlayer.getPlayer(event.getPlayer()) == null) {
+            TeleportPlayer.addPlayer(event.getPlayer());
+        }
+    }
 
-	@Override
-	public void onPlayerQuit(PlayerQuitEvent event) {
-		TeleportPlayer.removePlayer(event.getPlayer());
-	}
+    @Override
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        TeleportPlayer.removePlayer(event.getPlayer());
+    }
 
-	@Override
-	public void onPlayerKick(PlayerKickEvent event) {
+    @Override
+    public void onPlayerKick(PlayerKickEvent event) {
         if (event.isCancelled()) {
             return;
         }
-		TeleportPlayer.removePlayer(event.getPlayer());
-	}
-
+        TeleportPlayer.removePlayer(event.getPlayer());
+    }
 }
