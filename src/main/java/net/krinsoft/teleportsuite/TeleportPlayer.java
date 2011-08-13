@@ -59,7 +59,15 @@ public class TeleportPlayer implements Serializable {
 	 * the handle of the player
 	 */
 	public static void removePlayer(Player player) {
-		players.remove(player.getName());
+        if (players.get(player.getName()) != null) {
+            TeleportPlayer p = players.get(player.getName());
+            for (String req : p.requests()) {
+                players.get(req).finish(player);
+                cancel(req);
+            }
+            cancel(player.getName());
+            players.remove(player.getName());
+        }
 	}
 
 	/**

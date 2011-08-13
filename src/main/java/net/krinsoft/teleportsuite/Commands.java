@@ -15,7 +15,7 @@ import org.bukkit.entity.Player;
 /**
  *
  * @author krinsdeath
- * @version ${project.version}
+ * @version 1.0.5
  */
 
 class Commands implements CommandExecutor {

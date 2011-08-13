@@ -21,16 +21,12 @@ class Players extends PlayerListener {
 
 	@Override
 	public void onPlayerQuit(PlayerQuitEvent event) {
-		if (TeleportPlayer.getPlayer(event.getPlayer()) != null) {
-			TeleportPlayer.removePlayer(event.getPlayer());
-		}
+		TeleportPlayer.removePlayer(event.getPlayer());
 	}
 
 	@Override
 	public void onPlayerKick(PlayerKickEvent event) {
-		if (TeleportPlayer.getPlayer(event.getPlayer()) != null) {
-			TeleportPlayer.removePlayer(event.getPlayer());
-		}
+		TeleportPlayer.removePlayer(event.getPlayer());
 	}
 
 }

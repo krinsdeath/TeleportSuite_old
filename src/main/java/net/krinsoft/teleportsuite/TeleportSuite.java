@@ -11,7 +11,7 @@ import org.bukkit.util.config.Configuration;
 /**
  *
  * @author krinsdeath
- * @version 1.0.2
+ * @version 1.0.5
  */
 
 public class TeleportSuite extends JavaPlugin {
