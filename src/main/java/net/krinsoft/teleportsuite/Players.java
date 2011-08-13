@@ -26,6 +26,9 @@ class Players extends PlayerListener {
 
 	@Override
 	public void onPlayerKick(PlayerKickEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
 		TeleportPlayer.removePlayer(event.getPlayer());
 	}
 
