@@ -232,7 +232,7 @@ class Commands implements CommandExecutor {
                 if (TeleportPlayer.active.containsKey(player.getName())) {
                     Localization.message("request.cancel", TeleportPlayer.active.get(player.getName()).getName(), player);
                     Localization.message("request.cancelled", player.getName(), server.getPlayer(TeleportPlayer.active.get(player.getName()).getName()));
-                    TeleportPlayer.players.get(TeleportPlayer.active.get(player.getName()).getName()).finish(player);
+                    TeleportPlayer.players.get(TeleportPlayer.active.get(player.getName()).getName()).finish(player.getName());
                     TeleportPlayer.cancel(player.getName());
                 }
             } else {

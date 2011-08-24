@@ -60,8 +60,14 @@ public class TeleportPlayer implements Serializable {
     public static void removePlayer(Player player) {
         if (players.get(player.getName()) != null) {
             TeleportPlayer p = players.get(player.getName());
+            if (active.get(player.getName()) != null) {
+                Request r = active.get(player.getName());
+                players.get(r.getName()).finish(player.getName());
+                active.remove(player.getName());
+            }
+            if (p == null) { return; }
             for (String req : p.requests()) {
-                players.get(req).finish(player);
+                players.get(req).finish(player.getName());
                 cancel(req);
             }
             cancel(player.getName());
@@ -102,9 +108,10 @@ public class TeleportPlayer implements Serializable {
      * the player who initiated the request
      */
     public static void accept(Player from, Player to) {
+        if (from == null || to == null) { return; }
         // check if the accepting player's list has this player
         TeleportPlayer accept = getPlayer(from);
-        if (accept.hasRequest(to)) {
+        if (accept.hasRequest(to.getName())) {
             // there's a request! let's check how it should be handled
             if (active.containsKey(to.getName())) {
                 Request t = active.get(to.getName());
@@ -113,14 +120,14 @@ public class TeleportPlayer implements Serializable {
                     Localization.message("teleport.message", to.getName(), from);
                     Localization.message("teleport.notice", from.getName(), to);
                     from.teleport(to.getLocation());
-                    accept.finish(to);
+                    accept.finish(to.getName());
                     active.remove(to.getName());
                 } else if (t.getType() == Teleport.TO) {
                     getPlayer(to).setLastKnown(to.getLocation());
                     Localization.message("teleport.message", from.getName(), to);
                     Localization.message("teleport.notice", to.getName(), from);
                     to.teleport(from.getLocation());
-                    getPlayer(to).finish(from);
+                    getPlayer(to).finish(from.getName());
                     active.remove(to.getName());
                 }
                 requesting.remove(to.getName());
@@ -128,7 +135,7 @@ public class TeleportPlayer implements Serializable {
                 // weird, there was a request without an active request
                 // let's remove it and cancel
                 requesting.remove(to.getName());
-                accept.finish(to);
+                accept.finish(to.getName());
             }
         } else {
             // tell the accepter that he doesn't have a request from that player
@@ -159,11 +166,12 @@ public class TeleportPlayer implements Serializable {
      * the handle of the player who initiated the request
      */
     public static void reject(Player from, Player to) {
+        if (from == null || to == null) { return; }
         if (getPlayer(from).requests().contains(to.getName())) {
             active.remove(to.getName());
             from.sendMessage(Localization.getString("request.deny", to.getName()));
             to.sendMessage(Localization.getString("request.denied", from.getName()));
-            getPlayer(from).finish(to);
+            getPlayer(from).finish(to.getName());
             requesting.remove(to.getName());
             return;
         } else {
@@ -205,7 +213,7 @@ public class TeleportPlayer implements Serializable {
             if (getPlayer(to).isToggled()) {
                 if (priority == Priority.OVERRIDE) {
                     active.put(from.getName(), new Request(to.getName(), type));
-                    getPlayer(to).request(from);
+                    getPlayer(to).request(from.getName());
                     accept(to, from);
                 } else {
                     from.sendMessage(Localization.getString("request.ignored", to.getName()));
@@ -213,11 +221,11 @@ public class TeleportPlayer implements Serializable {
             } else {
                 if (priority == Priority.COMMAND || priority == Priority.OVERRIDE) {
                     active.put(from.getName(), new Request(to.getName(), type));
-                    getPlayer(to).request(from);
+                    getPlayer(to).request(from.getName());
                     accept(to, from);
                 } else {
                     active.put(from.getName(), new Request(to.getName(), type));
-                    getPlayer(to).request(from);
+                    getPlayer(to).request(from.getName());
                     from.sendMessage(Localization.getString("teleport.request.to", to.getName()));
                     to.sendMessage(Localization.getString("teleport.request.from", from.getName()));
                     requesting.add(from.getName());
@@ -309,7 +317,6 @@ public class TeleportPlayer implements Serializable {
      * the handle of the player to which this object belongs
      */
     public TeleportPlayer(Player player) {
-        this.name = player.getName();
         this.world = player.getWorld().getName();
         this.toggle = Localization.getBoolean("teleport.toggle.default", false);
         setLastKnown(player.getLocation());
@@ -382,8 +389,8 @@ public class TeleportPlayer implements Serializable {
      * @return false
      * the player has no such request
      */
-    public boolean hasRequest(Player p) {
-        return this.requests.contains(p.getName());
+    public boolean hasRequest(String player) {
+        return this.requests.contains(player);
     }
 
     /**
@@ -391,8 +398,8 @@ public class TeleportPlayer implements Serializable {
      * @param p
      * The player to add to the request queue
      */
-    public void request(Player p) {
-        this.requests.add(p.getName());
+    public void request(String from) {
+        this.requests.add(from);
     }
 
     /**
@@ -400,7 +407,7 @@ public class TeleportPlayer implements Serializable {
      * @param to
      * the player handle to remove from the list
      */
-    public void finish(Player to) {
-        this.requests.remove(to.getName());
+    public void finish(String to) {
+        this.requests.remove(to);
     }
 }
