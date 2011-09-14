@@ -22,13 +22,13 @@ public abstract class TeleportCommand extends Command {
     public Player[] check(CommandSender sender, String target) {
         Player[] checked = new Player[2];
         if (!(sender instanceof Player) || plugin.getServer().getPlayer(target) == null) {
-            Localization.error("error.target", (Player) sender);
+            Localization.error("error.target", sender);
             return null;
         }
         checked[0] = (Player) sender;
         checked[1] = plugin.getServer().getPlayer(target);
         if (checked[0].equals(checked[1])) {
-            Localization.error("error.target", (Player) sender);
+            Localization.error("error.target", sender);
             return null;
         }
         return checked;
