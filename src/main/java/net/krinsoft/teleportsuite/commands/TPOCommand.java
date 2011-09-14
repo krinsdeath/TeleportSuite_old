@@ -30,12 +30,8 @@ public class TPOCommand extends TeleportCommand {
 
     @Override
     public void runCommand(CommandSender sender, List<String> args) {
-        if (!(sender instanceof Player)) {
-            return;
-        }
         Player[] checked = check(sender, args.get(0));
-        if (checked == null || checked[0] == checked[1]) {
-            Localization.error("error.target", (Player) sender);
+        if (checked == null) {
             return;
         }
         TeleportPlayer.request(checked[0], checked[1], Teleport.TO, Priority.OVERRIDE);

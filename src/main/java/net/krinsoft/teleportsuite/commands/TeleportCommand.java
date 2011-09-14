@@ -1,6 +1,7 @@
 package net.krinsoft.teleportsuite.commands;
 
 import com.pneumaticraft.commandhandler.Command;
+import net.krinsoft.teleportsuite.Localization;
 import net.krinsoft.teleportsuite.TeleportSuite;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -21,10 +22,15 @@ public abstract class TeleportCommand extends Command {
     public Player[] check(CommandSender sender, String target) {
         Player[] checked = new Player[2];
         if (!(sender instanceof Player) || plugin.getServer().getPlayer(target) == null) {
+            Localization.error("error.target", (Player) sender);
             return null;
         }
         checked[0] = (Player) sender;
         checked[1] = plugin.getServer().getPlayer(target);
+        if (checked[0].equals(checked[1])) {
+            Localization.error("error.target", (Player) sender);
+            return null;
+        }
         return checked;
     }
 }
