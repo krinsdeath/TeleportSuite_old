@@ -4,96 +4,51 @@ version: ${project.version}
 author: krinsdeath
 
 commands:
-  tploc:
-    description: Teleports the sender to the specified location on his world
-    permission: commandsuite.teleport.tploc
-    usage: /<command> x y z [world]
-  tp:
-    description: Teleports the sender to the target
-    permission: commandsuite.teleport.tp
-    usage: /<command> (player)
-  tphere:
-    description: Teleports the target to the sender
-    permission: commandsuite.teleport.tphere
-    usage: /<command> (player)
-  tpa:
-    description: Asks the target if the sender can teleport to them
-    permission: commandsuite.teleport.tpa
-    usage: /<command> (player)
-  tpahere:
-    description: Asks the target if they want to teleport to the sender
-    permission: commandsuite.teleport.tpahere
-    usage: /<command> (player)
-  tpo:
-    description: Teleports the sender to the target, regardless of their toggle state
-    permission: commandsuite.teleport.tpo
-    usage: /<command (player)
-  tpohere:
-    description: Teleports the target to the sender, regardless of their toggle state
-    permission: commandsuite.teleport.tpohere
-    usage: /<command> (player)
-  tpaccept:
-    description: Accepts a teleport request
-    permission: commandsuite.teleport.tpaccept
-    usage: /<command> (player)
-  tpreject:
-    description: Rejects a teleport request
-    permission: commandsuite.teleport.tpreject
-    usage: /<command> (player)
-  tpcancel:
-    description: Cancels the current request
-    permission: commandsuite.teleport.tpcancel
+  teleport:
+    aliases:
+      - tps
+      - tp
+      - tphere
+      - tpa
+      - tpahere
+      - tpo
+      - tpohere
+      - tploc
+      - tpcoords
+      - tpaccept
+      - tpreject
+      - tprequests
+      - tptoggle
+      - tpback
+      - back
+      - tpworld
     usage: /<command>
-  tptoggle:
-    description: Turns on/off teleport requests.
-    permission: commandsuite.teleport.tptoggle
-    usage: /<command>
-  back:
-    description: Teleports the sender to their location prior to their last teleport
-    permission: commandsuite.teleport.back
-    usage: /<command>
-  requests:
-    description: Shows active requests for the user.
-    permission: commandsuite.teleport.requests
-    usage: /<command>
-  loc:
-    aliases: [whereami, where]
-    description: Displays your current location
-    permission: commandsuite.teleport.loc
-    usage: /<command>
-
 permissions:
   teleport.users:
-    description: Grants access to /tpa, /tpahere, /tpaccept, /tpreject, and /tptoggle
+    description: Convenience node for normal users.
     default: true
     children:
-      commandsuite.teleport.tpa: true
-      commandsuite.teleport.tpahere: true
-      commandsuite.teleport.tpaccept: true
-      commandsuite.teleport.tpreject: true
-      commandsuite.teleport.tptoggle: true
-      commandsuite.teleport.back: true
-      commandsuite.teleport.requests: true
-      commandsuite.teleport.tpcancel: true
-      commandsuite.teleport.loc: true
+      teleport.tpa: true
+      teleport.tpahere: true
+      teleport.requests: true
+      teleport.cancel: true
+      teleport.accept: true
+      teleport.reject: true
+      teleport.toggle: true
+      teleport.back: true
+      teleport.coords: true
+      teleport.world.*: true
   teleport.mods:
-    description: Grants access to /tp and /tphere
+    description: Convenience nodes for ops.
     default: op
     children:
-      commandsuite.teleport.tp: true
-      commandsuite.teleport.tphere: true
-      commandsuite.teleport.tploc: true
+      teleport.tp: true
+      teleport.tphere: true
+      teleport.tploc: true
+      teleport.tpworld: true
   teleport.admins:
-    description: Grants access to /tpo and /tpohere
+    description: Convenience node for overrides.
     default: false
     children:
-      commandsuite.teleport.tpo: true
-      commandsuite.teleport.tpohere: true
-      commandsuite.teleport.world.*: true
-  teleport.*:
-    description: Grants all-access
-    default: false
-    children:
-      teleport.users: true
-      teleport.mods: true
-      teleport.admins: true
+      teleport.tpo: true
+      teleport.tpohere: true

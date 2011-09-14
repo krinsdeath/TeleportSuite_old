@@ -7,31 +7,53 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.config.Configuration;
+import com.pneumaticraft.commandhandler.CommandHandler;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import net.krinsoft.teleportsuite.commands.TPACommand;
+import net.krinsoft.teleportsuite.commands.TPAHereCommand;
+import net.krinsoft.teleportsuite.commands.TPAcceptCommand;
+import net.krinsoft.teleportsuite.commands.TPBackCommand;
+import net.krinsoft.teleportsuite.commands.TPCancelCommand;
+import net.krinsoft.teleportsuite.commands.TPCommand;
+import net.krinsoft.teleportsuite.commands.TPCoordsCommand;
+import net.krinsoft.teleportsuite.commands.TPHereCommand;
+import net.krinsoft.teleportsuite.commands.TPLocationCommand;
+import net.krinsoft.teleportsuite.commands.TPOCommand;
+import net.krinsoft.teleportsuite.commands.TPOHereCommand;
+import net.krinsoft.teleportsuite.commands.TPRejectCommand;
+import net.krinsoft.teleportsuite.commands.TPRequestsCommand;
+import net.krinsoft.teleportsuite.commands.TPToggleCommand;
+import net.krinsoft.teleportsuite.commands.TPWorldCommand;
+import org.bukkit.World;
+import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionDefault;
 
 /**
  *
  * @author krinsdeath
- * @version 1.0.5
+ * @version 1.1.0
  */
 public class TeleportSuite extends JavaPlugin {
 
     protected static PluginDescriptionFile pdf;
     protected static PluginManager pm;
     protected static Configuration config;
-    private final Commands cmds = new Commands();
     private final Players pListener = new Players();
+	private CommandHandler commandHandler;
+	private PermissionHandler permissionHandler;
 
     @Override
     public void onEnable() {
-        pdf = getDescription();
-        config = getConfiguration();
-        pm = getServer().getPluginManager();
+		registerConfiguration();
+		registerCommands();
+        Localization.setConfig(config);
+        TeleportPlayer.init(this);
+        setup();
         pm.registerEvent(Event.Type.PLAYER_JOIN, pListener, Event.Priority.Normal, this);
         pm.registerEvent(Event.Type.PLAYER_QUIT, pListener, Event.Priority.Normal, this);
         pm.registerEvent(Event.Type.PLAYER_KICK, pListener, Event.Priority.Normal, this);
-        TeleportPlayer.init(this);
-        setup();
-        Localization.setConfig(config);
         System.out.println(pdf.getFullName() + " (by " + pdf.getAuthors().toString().replaceAll("([\\[\\]])", "") + ") is enabled.");
     }
 
@@ -46,8 +68,50 @@ public class TeleportSuite extends JavaPlugin {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        return cmds.onCommand(sender, cmd, label, args);
+		List<String> arguments = new ArrayList<String>(Arrays.asList(args));
+		arguments.add(0, label);
+		return commandHandler.locateAndRunCommand(sender, arguments);
     }
+
+	private void registerConfiguration() {
+		pm = getServer().getPluginManager();
+        pdf = getDescription();
+        config = getConfiguration();
+		Permission worlds = new Permission("teleport.world.*");
+		worlds.setDefault(PermissionDefault.TRUE);
+		if (pm.getPermission(worlds.getName()) == null) {
+			pm.addPermission(worlds);
+		}
+		for (World world : getServer().getWorlds()) {
+			Permission perm = new Permission("teleport.world." + world.getName());
+			perm.setDefault(PermissionDefault.TRUE);
+			if (pm.getPermission(perm.getName()) == null) {
+				pm.addPermission(perm);
+			}
+			worlds.getChildren().put(perm.getName(), true);
+		}
+		worlds.recalculatePermissibles();
+	}
+
+	private void registerCommands() {
+		permissionHandler = new PermissionHandler(config.getBoolean("plugin.opfallback", false));
+		commandHandler = new CommandHandler(this, permissionHandler);
+		commandHandler.registerCommand(new TPACommand(this));
+		commandHandler.registerCommand(new TPAHereCommand(this));
+		commandHandler.registerCommand(new TPAcceptCommand(this));
+		commandHandler.registerCommand(new TPBackCommand(this));
+		commandHandler.registerCommand(new TPCancelCommand(this));
+		commandHandler.registerCommand(new TPCommand(this));
+		commandHandler.registerCommand(new TPHereCommand(this));
+		commandHandler.registerCommand(new TPOCommand(this));
+		commandHandler.registerCommand(new TPOHereCommand(this));
+		commandHandler.registerCommand(new TPRejectCommand(this));
+		commandHandler.registerCommand(new TPRequestsCommand(this));
+		commandHandler.registerCommand(new TPToggleCommand(this));
+		commandHandler.registerCommand(new TPWorldCommand(this));
+		commandHandler.registerCommand(new TPLocationCommand(this));
+		commandHandler.registerCommand(new TPCoordsCommand(this));
+	}
 
     private void setup() {
         if (!versionMatch() || config.getBoolean("plugin.rebuild", false)) {
@@ -114,7 +178,7 @@ public class TeleportSuite extends JavaPlugin {
         int rev = Integer.parseInt(pdf.getVersion().split("\\.")[1]);
         int ver = Integer.parseInt(pdf.getVersion().split("\\.")[0]);
         if (ver == 1 && v <= ver) {
-            if (rev == 0 && r <= rev) {
+            if (rev >= 0 && r <= rev) {
                 if (fix >= 1 && f < fix) {
                     config.getString("request.cancel", "You cancelled your teleport to &a<player>&f.");
                     config.getString("request.cancelled", "&a<player>&f cancelled their teleport request.");
@@ -128,6 +192,13 @@ public class TeleportSuite extends JavaPlugin {
                     System.out.println("Config updated to " + pdf.getVersion() + ". Finalizing...");
                 }
             }
+			if (rev == 1 && r == 0 && fix == 0) {
+				config.setProperty("plugin.opfallback", false);
+			}
         }
     }
+
+	public PermissionHandler getPermissionHandler() {
+		return this.permissionHandler;
+	}
 }

@@ -5,7 +5,7 @@
     <groupId>net.krinsoft</groupId>
     <artifactId>TeleportSuite</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.5</version>
+    <version>1.1.0</version>
     <name>TeleportSuite</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -48,9 +48,9 @@
                         </goals>
                         <configuration>
                             <sources>
-                                <source>${basedir}/lib/AllPay/src/</source>
-                                <source>${basedir}/lib/CommandHandler/src/</source>
-                                <source>${basedir}/lib/CommandHandler/lib/ShellParser/src/</source>
+                                <source>${basedir}/lib/allpay/src/</source>
+                                <source>${basedir}/lib/commandhandler/src/</source>
+                                <source>${basedir}/lib/commandhandler/lib/ShellParser/src/</source>
                             </sources>
                         </configuration>
                     </execution>

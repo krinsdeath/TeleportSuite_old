@@ -9,7 +9,7 @@ import org.bukkit.util.config.Configuration;
  *
  * @author krinsdeath
  */
-class Localization {
+public class Localization {
 
     private static Configuration config;
     private final static Pattern COLOR = Pattern.compile("&([a-fA-f0-9])");

@@ -27,13 +27,16 @@ public class TeleportPlayer implements Serializable {
         OVERRIDE;
     }
     private final static long serialVersionUID = 991L;
-    protected static HashMap<String, TeleportPlayer> players = new HashMap<String, TeleportPlayer>();
-    protected static HashMap<String, Request> active = new HashMap<String, Request>();
-    protected static List<String> requesting = new ArrayList<String>();
+    public static HashMap<String, TeleportPlayer> players = new HashMap<String, TeleportPlayer>();
+    public static HashMap<String, Request> active = new HashMap<String, Request>();
+    public static List<String> requesting = new ArrayList<String>();
     protected static Server server;
 
     protected static void init(TeleportSuite inst) {
         server = inst.getServer();
+		for (Player p : server.getOnlinePlayers()) {
+			addPlayer(p);
+		}
     }
 
     protected static void clean() {
@@ -59,17 +62,7 @@ public class TeleportPlayer implements Serializable {
      */
     public static void removePlayer(Player player) {
         if (players.get(player.getName()) != null) {
-            TeleportPlayer p = players.get(player.getName());
-            if (active.get(player.getName()) != null) {
-                Request r = active.get(player.getName());
-                players.get(r.getName()).finish(player.getName());
-                active.remove(player.getName());
-            }
-            if (p == null) { return; }
-            for (String req : p.requests()) {
-                players.get(req).finish(player.getName());
-                cancel(req);
-            }
+			TeleportPlayer.rejectAll(player);
             cancel(player.getName());
             players.remove(player.getName());
         }
@@ -158,6 +151,17 @@ public class TeleportPlayer implements Serializable {
         }
     }
 
+	public static void acceptAll(Player player) {
+		if (getPlayer(player).requests().isEmpty()) {
+			return;
+		} else {
+			List<String> requests = getPlayer(player).requests();
+			for (String r : requests) {
+				accept(player, server.getPlayer(r));
+			}
+		}
+	}
+
     /**
      * Rejects a teleport quest
      * @param from
@@ -193,6 +197,16 @@ public class TeleportPlayer implements Serializable {
         }
     }
 
+	public static void rejectAll(Player player) {
+		if (getPlayer(player).requests().isEmpty()) {
+			return;
+		} else {
+			List<String> requests = getPlayer(player).requests();
+			for (String r : requests) {
+				reject(player, server.getPlayer(r));
+			}
+		}
+	}
     /**
      * Initiates a request from the specified player to the the specified player
      * @param from
