@@ -2,6 +2,7 @@ package net.krinsoft.teleportsuite;
 
 import java.util.List;
 import java.util.regex.Pattern;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.config.Configuration;
 
@@ -28,12 +29,13 @@ public class Localization {
         return null;
     }
 
-    public static void error(String path, Player player) {
+    public static void error(String path, CommandSender sender) {
         String msg = config.getString(path, "not null");
+        String rep = (sender instanceof Player ? ((Player)sender).getName() : "Console");
         if (msg != null) {
-            msg = msg.replaceAll("<player>", player.getName());
+            msg = msg.replaceAll("<player>", rep);
             msg = color(msg);
-            player.sendMessage(msg);
+            sender.sendMessage(msg);
         }
     }
 
@@ -41,7 +43,7 @@ public class Localization {
         return COLOR.matcher(msg).replaceAll("\u00A7$1");
     }
 
-    public static void message(String path, String rep, Player p) {
+    public static void message(String path, String rep, CommandSender p) {
         Object obj = config.getProperty(path);
         if (obj instanceof List) {
             List<String> list = (List<String>) obj;
@@ -60,7 +62,7 @@ public class Localization {
         }
     }
 
-    public static void message(String path, String name, double x, double y, double z, Player p) {
+    public static void message(String path, String name, double x, double y, double z, CommandSender p) {
         String msg = config.getString(path, "not null");
         if (msg != null) {
             msg = msg.replaceAll("<world>", name);
