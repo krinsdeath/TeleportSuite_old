@@ -16,30 +16,28 @@ import org.bukkit.permissions.PermissionDefault;
  */
 public class TPAHereCommand extends TeleportCommand {
 
-	public TPAHereCommand(TeleportSuite plugin) {
-		super(plugin);
-		this.setName("TeleportSuite TPAHere");
-		this.setCommandUsage("/tpahere [player]");
-		this.addCommandExample("/tpahere Player");
-		this.setArgRange(1, 1);
-		this.addKey("teleport here");
-		this.addKey("tps here");
-		this.addKey("tpahere");
-		this.setPermission("teleport.tpahere", "Allows this user to request another user to teleport to him.", PermissionDefault.TRUE);
-	}
+    public TPAHereCommand(TeleportSuite plugin) {
+        super(plugin);
+        this.setName("TeleportSuite TPAHere");
+        this.setCommandUsage("/tpahere [player]");
+        this.addCommandExample("/tpahere Player");
+        this.setArgRange(1, 1);
+        this.addKey("teleport here");
+        this.addKey("tps here");
+        this.addKey("tpahere");
+        this.setPermission("teleport.tpahere", "Allows this user to request another user to teleport to him.", PermissionDefault.TRUE);
+    }
 
-	@Override
-	public void runCommand(CommandSender sender, List<String> args) {
-		if (!(sender instanceof Player)) {
-			return;
-		}
-		Player[] checked = check(sender, args.get(0));
-		if (checked == null || checked[0] == checked[1]) {
+    @Override
+    public void runCommand(CommandSender sender, List<String> args) {
+        if (!(sender instanceof Player)) {
+            return;
+        }
+        Player[] checked = check(sender, args.get(0));
+        if (checked == null || checked[0] == checked[1]) {
             Localization.error("error.target", (Player) sender);
-			return;
-		}
-		TeleportPlayer.request(checked[0], checked[1], Teleport.HERE, Priority.REQUEST);
-	}
-
-
+            return;
+        }
+        TeleportPlayer.request(checked[0], checked[1], Teleport.HERE, Priority.REQUEST);
+    }
 }

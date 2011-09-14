@@ -41,13 +41,13 @@ public class TeleportSuite extends JavaPlugin {
     protected static PluginManager pm;
     protected static Configuration config;
     private final Players pListener = new Players();
-	private CommandHandler commandHandler;
-	private PermissionHandler permissionHandler;
+    private CommandHandler commandHandler;
+    private PermissionHandler permissionHandler;
 
     @Override
     public void onEnable() {
-		registerConfiguration();
-		registerCommands();
+        registerConfiguration();
+        registerCommands();
         Localization.setConfig(config);
         TeleportPlayer.init(this);
         setup();
@@ -68,50 +68,50 @@ public class TeleportSuite extends JavaPlugin {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		List<String> arguments = new ArrayList<String>(Arrays.asList(args));
-		arguments.add(0, label);
-		return commandHandler.locateAndRunCommand(sender, arguments);
+        List<String> arguments = new ArrayList<String>(Arrays.asList(args));
+        arguments.add(0, label);
+        return commandHandler.locateAndRunCommand(sender, arguments);
     }
 
-	private void registerConfiguration() {
-		pm = getServer().getPluginManager();
+    private void registerConfiguration() {
+        pm = getServer().getPluginManager();
         pdf = getDescription();
         config = getConfiguration();
-		Permission worlds = new Permission("teleport.world.*");
-		worlds.setDefault(PermissionDefault.TRUE);
-		if (pm.getPermission(worlds.getName()) == null) {
-			pm.addPermission(worlds);
-		}
-		for (World world : getServer().getWorlds()) {
-			Permission perm = new Permission("teleport.world." + world.getName());
-			perm.setDefault(PermissionDefault.TRUE);
-			if (pm.getPermission(perm.getName()) == null) {
-				pm.addPermission(perm);
-			}
-			worlds.getChildren().put(perm.getName(), true);
-		}
-		worlds.recalculatePermissibles();
-	}
+        Permission worlds = new Permission("teleport.world.*");
+        worlds.setDefault(PermissionDefault.TRUE);
+        if (pm.getPermission(worlds.getName()) == null) {
+            pm.addPermission(worlds);
+        }
+        for (World world : getServer().getWorlds()) {
+            Permission perm = new Permission("teleport.world." + world.getName());
+            perm.setDefault(PermissionDefault.TRUE);
+            if (pm.getPermission(perm.getName()) == null) {
+                pm.addPermission(perm);
+            }
+            worlds.getChildren().put(perm.getName(), true);
+        }
+        worlds.recalculatePermissibles();
+    }
 
-	private void registerCommands() {
-		permissionHandler = new PermissionHandler(config.getBoolean("plugin.opfallback", false));
-		commandHandler = new CommandHandler(this, permissionHandler);
-		commandHandler.registerCommand(new TPACommand(this));
-		commandHandler.registerCommand(new TPAHereCommand(this));
-		commandHandler.registerCommand(new TPAcceptCommand(this));
-		commandHandler.registerCommand(new TPBackCommand(this));
-		commandHandler.registerCommand(new TPCancelCommand(this));
-		commandHandler.registerCommand(new TPCommand(this));
-		commandHandler.registerCommand(new TPHereCommand(this));
-		commandHandler.registerCommand(new TPOCommand(this));
-		commandHandler.registerCommand(new TPOHereCommand(this));
-		commandHandler.registerCommand(new TPRejectCommand(this));
-		commandHandler.registerCommand(new TPRequestsCommand(this));
-		commandHandler.registerCommand(new TPToggleCommand(this));
-		commandHandler.registerCommand(new TPWorldCommand(this));
-		commandHandler.registerCommand(new TPLocationCommand(this));
-		commandHandler.registerCommand(new TPCoordsCommand(this));
-	}
+    private void registerCommands() {
+        permissionHandler = new PermissionHandler(config.getBoolean("plugin.opfallback", false));
+        commandHandler = new CommandHandler(this, permissionHandler);
+        commandHandler.registerCommand(new TPACommand(this));
+        commandHandler.registerCommand(new TPAHereCommand(this));
+        commandHandler.registerCommand(new TPAcceptCommand(this));
+        commandHandler.registerCommand(new TPBackCommand(this));
+        commandHandler.registerCommand(new TPCancelCommand(this));
+        commandHandler.registerCommand(new TPCommand(this));
+        commandHandler.registerCommand(new TPHereCommand(this));
+        commandHandler.registerCommand(new TPOCommand(this));
+        commandHandler.registerCommand(new TPOHereCommand(this));
+        commandHandler.registerCommand(new TPRejectCommand(this));
+        commandHandler.registerCommand(new TPRequestsCommand(this));
+        commandHandler.registerCommand(new TPToggleCommand(this));
+        commandHandler.registerCommand(new TPWorldCommand(this));
+        commandHandler.registerCommand(new TPLocationCommand(this));
+        commandHandler.registerCommand(new TPCoordsCommand(this));
+    }
 
     private void setup() {
         if (!versionMatch() || config.getBoolean("plugin.rebuild", false)) {
@@ -192,13 +192,13 @@ public class TeleportSuite extends JavaPlugin {
                     System.out.println("Config updated to " + pdf.getVersion() + ". Finalizing...");
                 }
             }
-			if (rev == 1 && r == 0 && fix == 0) {
-				config.setProperty("plugin.opfallback", false);
-			}
+            if (rev == 1 && r == 0 && fix == 0) {
+                config.setProperty("plugin.opfallback", false);
+            }
         }
     }
 
-	public PermissionHandler getPermissionHandler() {
-		return this.permissionHandler;
-	}
+    public PermissionHandler getPermissionHandler() {
+        return this.permissionHandler;
+    }
 }

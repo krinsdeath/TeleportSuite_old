@@ -34,9 +34,9 @@ public class TeleportPlayer implements Serializable {
 
     protected static void init(TeleportSuite inst) {
         server = inst.getServer();
-		for (Player p : server.getOnlinePlayers()) {
-			addPlayer(p);
-		}
+        for (Player p : server.getOnlinePlayers()) {
+            addPlayer(p);
+        }
     }
 
     protected static void clean() {
@@ -62,7 +62,7 @@ public class TeleportPlayer implements Serializable {
      */
     public static void removePlayer(Player player) {
         if (players.get(player.getName()) != null) {
-			TeleportPlayer.rejectAll(player);
+            TeleportPlayer.rejectAll(player);
             cancel(player.getName());
             players.remove(player.getName());
         }
@@ -101,7 +101,9 @@ public class TeleportPlayer implements Serializable {
      * the player who initiated the request
      */
     public static void accept(Player from, Player to) {
-        if (from == null || to == null) { return; }
+        if (from == null || to == null) {
+            return;
+        }
         // check if the accepting player's list has this player
         TeleportPlayer accept = getPlayer(from);
         if (accept.hasRequest(to.getName())) {
@@ -151,16 +153,16 @@ public class TeleportPlayer implements Serializable {
         }
     }
 
-	public static void acceptAll(Player player) {
-		if (getPlayer(player).requests().isEmpty()) {
-			return;
-		} else {
-			List<String> requests = getPlayer(player).requests();
-			for (String r : requests) {
-				accept(player, server.getPlayer(r));
-			}
-		}
-	}
+    public static void acceptAll(Player player) {
+        if (getPlayer(player).requests().isEmpty()) {
+            return;
+        } else {
+            List<String> requests = getPlayer(player).requests();
+            for (String r : requests) {
+                accept(player, server.getPlayer(r));
+            }
+        }
+    }
 
     /**
      * Rejects a teleport quest
@@ -170,7 +172,9 @@ public class TeleportPlayer implements Serializable {
      * the handle of the player who initiated the request
      */
     public static void reject(Player from, Player to) {
-        if (from == null || to == null) { return; }
+        if (from == null || to == null) {
+            return;
+        }
         if (getPlayer(from).requests().contains(to.getName())) {
             active.remove(to.getName());
             from.sendMessage(Localization.getString("request.deny", to.getName()));
@@ -197,16 +201,17 @@ public class TeleportPlayer implements Serializable {
         }
     }
 
-	public static void rejectAll(Player player) {
-		if (getPlayer(player).requests().isEmpty()) {
-			return;
-		} else {
-			List<String> requests = getPlayer(player).requests();
-			for (String r : requests) {
-				reject(player, server.getPlayer(r));
-			}
-		}
-	}
+    public static void rejectAll(Player player) {
+        if (getPlayer(player).requests().isEmpty()) {
+            return;
+        } else {
+            List<String> requests = getPlayer(player).requests();
+            for (String r : requests) {
+                reject(player, server.getPlayer(r));
+            }
+        }
+    }
+
     /**
      * Initiates a request from the specified player to the the specified player
      * @param from
