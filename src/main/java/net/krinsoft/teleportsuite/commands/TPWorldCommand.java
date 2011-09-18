@@ -3,6 +3,7 @@ package net.krinsoft.teleportsuite.commands;
 import java.util.List;
 import net.krinsoft.teleportsuite.Localization;
 import net.krinsoft.teleportsuite.TeleportSuite;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -41,8 +42,42 @@ public class TPWorldCommand extends TeleportCommand {
             }
         }
         if (plugin.getPermissionHandler().canEnterWorld(sender, world.getName())) {
-            player.teleport(world.getSpawnLocation());
+            setLastKnown(player, player.getLocation());
+            Location loc = getLastKnown(player, world.getName());
+            if (loc == null) {
+                loc = world.getSpawnLocation();
+                setLastKnown(player, loc);
+            }
+            plugin.getUsers().save();
+            player.teleport(loc);
             return;
         }
+    }
+
+    public void setLastKnown(Player p, Location l) {
+        String location = (int)l.getX() + ":" + (int)l.getY() + ":" + (int)l.getZ();
+        System.out.println(l.getWorld().getName() + ": " + location);
+        plugin.getUsers().setProperty(p.getName() + "." + l.getWorld().getName(), location);
+    }
+
+    public Location getLastKnown(Player p, String world) {
+        String loc = plugin.getUsers().getString(p.getName() + "." + world);
+        System.out.println(world + ": " + loc);
+        int[] place = new int[3];
+        try {
+            place[0] = Integer.parseInt(loc.split(":")[0]);
+            place[1] = Integer.parseInt(loc.split(":")[1]);
+            place[2] = Integer.parseInt(loc.split(":")[2]);
+        } catch (NumberFormatException e) {
+            System.out.println(e.getLocalizedMessage());
+            return null;
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println(e.getLocalizedMessage());
+            return null;
+        } catch (NullPointerException e) {
+            System.out.println(e.getLocalizedMessage());
+            return null;
+        }
+        return new Location(plugin.getServer().getWorld(world), place[0], place[1], place[2]);
     }
 }

@@ -8,9 +8,11 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.config.Configuration;
 import com.pneumaticraft.commandhandler.CommandHandler;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Logger;
 import net.krinsoft.teleportsuite.commands.TPACommand;
 import net.krinsoft.teleportsuite.commands.TPAHereCommand;
 import net.krinsoft.teleportsuite.commands.TPAcceptCommand;
@@ -40,12 +42,18 @@ public class TeleportSuite extends JavaPlugin {
     protected static PluginDescriptionFile pdf;
     protected static PluginManager pm;
     protected static Configuration config;
+    protected static Configuration users;
     private final Players pListener = new Players();
+    private double chVersion = 1;
     private CommandHandler commandHandler;
     private PermissionHandler permissionHandler;
 
     @Override
     public void onEnable() {
+        if (!validateCommandHandler()) {
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
         registerConfiguration();
         registerCommands();
         Localization.setConfig(config);
@@ -73,10 +81,32 @@ public class TeleportSuite extends JavaPlugin {
         return commandHandler.locateAndRunCommand(sender, arguments);
     }
 
+    private boolean validateCommandHandler() {
+        Logger log = Logger.getLogger("TeleportSuite");
+        try {
+            commandHandler = new CommandHandler(this, null);
+            if (this.commandHandler.getVersion() >= chVersion) {
+                return true;
+            } else {
+                log.warning("A plugin with an outdated version of CommandHandler initialized before " + this + ".");
+                log.warning(this + " needs CommandHandler v" + chVersion + " or higher, but CommandHandler v" + commandHandler.getVersion() + " was detected.");
+                log.warning("Nag the authors of the following plugins: ");
+                return false;
+            }
+        } catch (Throwable t) {
+        }
+        log.warning("A plugin with an outdated version of CommandHandler initialized before " + this + ".");
+        log.warning(this + " needs CommandHandler v" + chVersion + " or higher, but CommandHandler v" + commandHandler.getVersion() + " was detected.");
+        log.warning("Nag the authors of the following plugins: ");
+        return false;
+    }
+
     private void registerConfiguration() {
         pm = getServer().getPluginManager();
         pdf = getDescription();
         config = getConfiguration();
+        users = new Configuration(new File(getDataFolder(), "users.yml"));
+        users.load();
         Permission worlds = new Permission("teleport.world.*");
         worlds.setDefault(PermissionDefault.TRUE);
         if (pm.getPermission(worlds.getName()) == null) {
@@ -196,6 +226,10 @@ public class TeleportSuite extends JavaPlugin {
                 config.setProperty("plugin.opfallback", false);
             }
         }
+    }
+
+    public Configuration getUsers() {
+        return users;
     }
 
     public PermissionHandler getPermissionHandler() {

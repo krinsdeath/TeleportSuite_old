@@ -48,7 +48,7 @@
                         </goals>
                         <configuration>
                             <sources>
-                                <source>${basedir}/lib/allpay/src/</source>
+                                <!--<source>${basedir}/lib/allpay/src/</source>-->
                                 <source>${basedir}/lib/commandhandler/src/</source>
                                 <source>${basedir}/lib/commandhandler/lib/ShellParser/src/</source>
                             </sources>
@@ -77,7 +77,14 @@
             <type>jar</type>
         </dependency>
         <!-- End Bukkit -->
+        <dependency>
+            <groupId>com.fernferret</groupId>
+            <artifactId>allpay</artifactId>
+            <version>1.0.3</version>
+            <type>jar</type>
+        </dependency>
 		<!-- Start of Economy Dependencies -->
+        <!--
 		<dependency>
 			<groupId>cosine.boseconomy</groupId>
 			<artifactId>BOSEconomy</artifactId>
@@ -132,6 +139,7 @@
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
+        -->
 		<!-- End of Economy Dependencies -->
         <!-- JUnit for ShellParser -->
         <dependency>
