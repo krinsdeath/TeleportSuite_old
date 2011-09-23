@@ -77,12 +77,6 @@
             <type>jar</type>
         </dependency>
         <!-- End Bukkit -->
-        <dependency>
-            <groupId>com.fernferret</groupId>
-            <artifactId>allpay</artifactId>
-            <version>1.0.3</version>
-            <type>jar</type>
-        </dependency>
 		<!-- Start of Economy Dependencies -->
         <!--
 		<dependency>

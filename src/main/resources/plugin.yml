@@ -2,17 +2,12 @@ name: TeleportSuite
 main: net.krinsoft.teleportsuite.TeleportSuite
 version: ${project.version}
 author: krinsdeath
+load: startup
 
 commands:
   teleport:
     aliases:
       - tps
-      - tp
-      - tphere
-      - tpa
-      - tpahere
-      - tpo
-      - tpohere
       - tploc
       - tpcoords
       - tpaccept
@@ -20,8 +15,28 @@ commands:
       - tprequests
       - tptoggle
       - tpback
-      - back
       - tpworld
+    usage: /<command>
+  tp:
+    description: Allows users to teleport to each other.
+    usage: /<command>
+  tphere:
+    description: Allows users to teleport other users to them.
+    usage: /<command>
+  tpa:
+    description: Allows users to request teleports to each other.
+    usage: /<command>
+  tpahere:
+    description: Allows users to request another user to teleport to them.
+    usage: /<command>
+  tpo:
+    description: Overrides a user's teleport toggle status and teleports the sender immediately.
+    usage: /<command>
+  tpohere:
+    description: Overrides a user's teleport toggle status and teleports them immediately to the sender.
+    usage: /<command>
+  back:
+    description: Teleports the user to their previous location.
     usage: /<command>
 permissions:
   teleport.users:

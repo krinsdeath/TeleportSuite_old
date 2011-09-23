@@ -209,6 +209,9 @@ public class TeleportSuite extends JavaPlugin {
         int ver = Integer.parseInt(pdf.getVersion().split("\\.")[0]);
         if (ver == 1 && v <= ver) {
             if (rev >= 0 && r <= rev) {
+                if (r == 0 && rev > 0) {
+                    fix = 10;
+                }
                 if (fix >= 1 && f < fix) {
                     config.getString("request.cancel", "You cancelled your teleport to &a<player>&f.");
                     config.getString("request.cancelled", "&a<player>&f cancelled their teleport request.");
@@ -219,11 +222,12 @@ public class TeleportSuite extends JavaPlugin {
                 }
                 if (fix >= 4 && f < fix) {
                     config.setProperty("teleport.toggle.default", false);
-                    System.out.println("Config updated to " + pdf.getVersion() + ". Finalizing...");
                 }
             }
-            if (rev == 1 && r == 0 && fix == 0) {
+            if (rev == 1 && r == 0) {
                 config.setProperty("plugin.opfallback", false);
+                config.setProperty("plugin.version", pdf.getVersion());
+                System.out.println("Config updated to " + pdf.getVersion() + ". Finalizing...");
             }
         }
     }

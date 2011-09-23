@@ -21,6 +21,7 @@ public class TPCommand extends TeleportCommand {
         this.setName("TeleportSuite TP");
         this.setCommandUsage("/tp [player]");
         this.addCommandExample("/tp Player");
+        this.setArgRange(1, 1);
         this.addKey("teleport tp");
         this.addKey("tps tp");
         this.addKey("tp");
