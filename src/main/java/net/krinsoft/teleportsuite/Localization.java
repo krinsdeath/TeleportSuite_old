@@ -30,7 +30,7 @@ public class Localization {
     }
 
     public static void error(String path, CommandSender sender) {
-        String msg = config.getString(path, "not null");
+        String msg = config.getString(path);
         String rep = (sender instanceof Player ? ((Player)sender).getName() : "Console");
         if (msg != null) {
             msg = msg.replaceAll("<player>", rep);
@@ -45,20 +45,20 @@ public class Localization {
 
     public static void message(String path, String rep, CommandSender p) {
         Object obj = config.getProperty(path);
-        if (obj instanceof List) {
+        if (obj == null) {
+            return;
+        } else if (obj instanceof String) {
+            String msg = (String) obj;
+            msg = msg.replaceAll("(<flag>|<player>)", rep);
+            msg = color(msg);
+            p.sendMessage(msg);
+        } else if (obj instanceof List) {
             List<String> list = (List<String>) obj;
             for (String line : list) {
                 line = line.replaceAll("(<flag>|<player>)", rep);
                 line = color(line);
                 p.sendMessage(line);
             }
-        } else if (obj instanceof String) {
-            String msg = (String) obj;
-            msg = msg.replaceAll("(<flag>|<player>)", rep);
-            msg = color(msg);
-            p.sendMessage(msg);
-        } else if (obj == null) {
-            return;
         }
     }
 

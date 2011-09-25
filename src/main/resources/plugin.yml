@@ -16,6 +16,7 @@ commands:
       - tptoggle
       - tpback
       - tpworld
+      - tpcancel
     usage: /<command>
   tp:
     description: Allows users to teleport to each other.
