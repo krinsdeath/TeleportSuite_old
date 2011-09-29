@@ -149,7 +149,7 @@ public class TeleportPlayer implements Serializable {
         if (TeleportPlayer.getPlayer(player).requests().isEmpty()) {
             return;
         } else {
-            accept(player, server.getPlayer(TeleportPlayer.getPlayer(player).requests().get(0)));
+            accept(player, server.getPlayer(getPlayer(player).requests().get(0)));
         }
     }
 
@@ -157,7 +157,7 @@ public class TeleportPlayer implements Serializable {
         if (getPlayer(player).requests().isEmpty()) {
             return;
         } else {
-            List<String> requests = getPlayer(player).requests();
+            List<String> requests = new ArrayList<String>(getPlayer(player).requests());
             for (String r : requests) {
                 accept(player, server.getPlayer(r));
             }
@@ -165,7 +165,7 @@ public class TeleportPlayer implements Serializable {
     }
 
     /**
-     * Rejects a teleport quest
+     * Rejects a teleport request
      * @param from
      * the handle of the player who received the request
      * @param to
@@ -183,7 +183,7 @@ public class TeleportPlayer implements Serializable {
             requesting.remove(to.getName());
             return;
         } else {
-            to.sendMessage(Localization.getString("request.none", from.getName()));
+            from.sendMessage(Localization.getString("request.none", from.getName()));
         }
     }
 
@@ -197,7 +197,7 @@ public class TeleportPlayer implements Serializable {
         if (TeleportPlayer.getPlayer(player).requests().isEmpty()) {
             return;
         } else {
-            reject(player, server.getPlayer(TeleportPlayer.getPlayer(player).requests().get(0)));
+            reject(player, server.getPlayer(getPlayer(player).requests().get(0)));
         }
     }
 
@@ -205,7 +205,7 @@ public class TeleportPlayer implements Serializable {
         if (getPlayer(player).requests().isEmpty()) {
             return;
         } else {
-            List<String> requests = getPlayer(player).requests();
+            List<String> requests = new ArrayList<String>(getPlayer(player).requests());
             for (String r : requests) {
                 reject(player, server.getPlayer(r));
             }
@@ -306,7 +306,6 @@ public class TeleportPlayer implements Serializable {
     }
     /**
      * The name of the player to which this TeleportPlayer object is mapped
-     * @deprecated
      */
     private String name;
     /**
@@ -382,7 +381,7 @@ public class TeleportPlayer implements Serializable {
     public void toggle() {
         if (toggle) {
             this.toggle = false;
-            requests.clear();
+            rejectAll(server.getPlayer(this.name));
             return;
         } else {
             this.toggle = true;
@@ -420,6 +419,7 @@ public class TeleportPlayer implements Serializable {
     public void request(String from) {
         this.requests.add(from);
     }
+
 
     /**
      * Removes a player from this player's request list

@@ -55,9 +55,9 @@ public class TPLocationCommand extends TeleportCommand {
         double x = 0, y = 0, z = 0;
         float yaw = player.getLocation().getYaw(), pitch = player.getLocation().getPitch();
         try {
-            x = Integer.parseInt(args.get(0));
-            y = Integer.parseInt(args.get(1));
-            z = Integer.parseInt(args.get(2));
+            x = Double.parseDouble(args.get(0));
+            y = Double.parseDouble(args.get(1));
+            z = Double.parseDouble(args.get(2));
         } catch (NumberFormatException e) {
             Localization.error("error.params", player);
             return;

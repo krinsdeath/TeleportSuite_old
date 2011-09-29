@@ -61,11 +61,11 @@ public class TPWorldCommand extends TeleportCommand {
 
     public Location getLastKnown(Player p, String world) {
         String loc = plugin.getUsers().getString(p.getName() + "." + world);
-        int[] place = new int[3];
+        double[] place = new double[3];
         try {
-            place[0] = Integer.parseInt(loc.split(":")[0]);
-            place[1] = Integer.parseInt(loc.split(":")[1]);
-            place[2] = Integer.parseInt(loc.split(":")[2]);
+            place[0] = Integer.parseInt(loc.split(":")[0]) + 0.5;
+            place[1] = Integer.parseInt(loc.split(":")[1]) + 0.1;
+            place[2] = Integer.parseInt(loc.split(":")[2]) + 0.5;
         } catch (NumberFormatException e) {
             System.out.println(e.getLocalizedMessage());
             return null;
