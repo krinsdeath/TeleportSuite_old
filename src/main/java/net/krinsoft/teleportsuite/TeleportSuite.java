@@ -44,6 +44,7 @@ public class TeleportSuite extends JavaPlugin {
     protected static Configuration config;
     protected static Configuration users;
     private final Players pListener = new Players();
+    private final Entities eListener = new Entities();
     private double chVersion = 1;
     private CommandHandler commandHandler;
     private PermissionHandler permissionHandler;
@@ -62,6 +63,7 @@ public class TeleportSuite extends JavaPlugin {
         pm.registerEvent(Event.Type.PLAYER_JOIN, pListener, Event.Priority.Normal, this);
         pm.registerEvent(Event.Type.PLAYER_QUIT, pListener, Event.Priority.Normal, this);
         pm.registerEvent(Event.Type.PLAYER_KICK, pListener, Event.Priority.Normal, this);
+        pm.registerEvent(Event.Type.ENTITY_DEATH, eListener, Event.Priority.Normal, this);
         System.out.println(pdf.getFullName() + " (by " + pdf.getAuthors().toString().replaceAll("([\\[\\]])", "") + ") is enabled.");
     }
 

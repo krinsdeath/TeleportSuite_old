@@ -4,6 +4,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 
 /**
  *
@@ -29,5 +30,13 @@ class Players extends PlayerListener {
             return;
         }
         TeleportPlayer.removePlayer(event.getPlayer());
+    }
+
+    @Override
+    public void onPlayerTeleport(PlayerTeleportEvent event) {
+        if (event.isCancelled()) { return; }
+        if (event.getTo() != null && event.getFrom() != null && !event.getTo().equals(event.getFrom())) {
+            TeleportPlayer.getPlayer(event.getPlayer()).setLastKnown(event.getFrom());
+        }
     }
 }

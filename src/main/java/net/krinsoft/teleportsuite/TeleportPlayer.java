@@ -76,6 +76,7 @@ public class TeleportPlayer implements Serializable {
      * A TeleportPlayer object related to the handle provided
      */
     public static TeleportPlayer getPlayer(Player player) {
+        if (players.get(player.getName()) == null) { addPlayer(player); }
         return players.get(player.getName());
     }
 

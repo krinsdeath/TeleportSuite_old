@@ -22,6 +22,7 @@ public class TPToggleCommand extends TeleportCommand {
         this.addKey("teleport toggle");
         this.addKey("tps toggle");
         this.addKey("tptoggle");
+        this.addKey("tpt");
         this.setPermission("teleport.toggle", "Allows this user to toggle their request accessibility.", PermissionDefault.TRUE);
     }
 
