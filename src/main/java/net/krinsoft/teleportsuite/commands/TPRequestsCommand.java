@@ -22,6 +22,7 @@ public class TPRequestsCommand extends TeleportCommand {
         this.addKey("teleport requests");
         this.addKey("tps requests");
         this.addKey("tprequests");
+        this.addKey("tpr");
         this.setPermission("teleport.requests", "Allows this user to display their active requests.", PermissionDefault.TRUE);
     }
 

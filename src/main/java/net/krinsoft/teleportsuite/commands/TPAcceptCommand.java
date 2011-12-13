@@ -24,6 +24,7 @@ public class TPAcceptCommand extends TeleportCommand {
         this.addKey("teleport accept");
         this.addKey("tps accept");
         this.addKey("tpaccept");
+        this.addKey("tpacc");
         this.setPermission("teleport.accept", "Allows this user to accept requests.", PermissionDefault.TRUE);
     }
 

@@ -24,6 +24,7 @@ public class TPRejectCommand extends TeleportCommand {
         this.addKey("teleport reject");
         this.addKey("tps reject");
         this.addKey("tpreject");
+        this.addKey("tprej");
         this.setPermission("teleport.reject", "Allows this user to reject requests.", PermissionDefault.TRUE);
     }
 

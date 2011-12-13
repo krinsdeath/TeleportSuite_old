@@ -11,8 +11,11 @@ commands:
       - tploc
       - tpcoords
       - tpaccept
+      - tpacc
       - tpreject
+      - tprej
       - tprequests
+      - tpr
       - tptoggle
       - tpt
       - tpback

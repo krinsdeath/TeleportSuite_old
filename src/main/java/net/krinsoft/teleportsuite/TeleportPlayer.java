@@ -91,6 +91,7 @@ public class TeleportPlayer implements Serializable {
      * the handle of the player
      */
     public static void toggle(Player player) {
+        if (players.get(player.getName()) == null) { addPlayer(player); }
         players.get(player.getName()).toggle();
     }
 
@@ -117,22 +118,19 @@ public class TeleportPlayer implements Serializable {
                     Localization.message("teleport.notice", from.getName(), to);
                     from.teleport(to.getLocation());
                     accept.finish(to.getName());
-                    active.remove(to.getName());
                 } else if (t.getType() == Teleport.TO) {
                     getPlayer(to).setLastKnown(to.getLocation());
                     Localization.message("teleport.message", from.getName(), to);
                     Localization.message("teleport.notice", to.getName(), from);
                     to.teleport(from.getLocation());
                     getPlayer(to).finish(from.getName());
-                    active.remove(to.getName());
                 }
-                requesting.remove(to.getName());
-            } else {
-                // weird, there was a request without an active request
-                // let's remove it and cancel
-                requesting.remove(to.getName());
                 accept.finish(to.getName());
+                active.remove(to.getName());
+                requesting.remove(to.getName());
             }
+            requesting.remove(to.getName());
+            accept.finish(to.getName());
         } else {
             // tell the accepter that he doesn't have a request from that player
             from.sendMessage(Localization.getString("request.none", to.getName()));
@@ -227,6 +225,14 @@ public class TeleportPlayer implements Serializable {
      * @see Priority
      */
     public static void request(Player from, Player to, Teleport type, Priority priority) {
+        if (priority == Priority.OVERRIDE) {
+            if (type == Teleport.HERE) {
+                override(from, to);
+            } else {
+                override(to, from);
+            }
+            return;
+        }
         if (requesting.contains(from.getName())) {
             from.sendMessage(Localization.getString("request.only_one", ""));
         } else {
@@ -252,6 +258,16 @@ public class TeleportPlayer implements Serializable {
                 }
             }
         }
+    }
+
+    /*
+     * Teleport player 'from' to player 'to'
+     */
+    private static void override(Player to, Player from) {
+        if (to == null || from == null) {
+            return;
+        }
+        from.teleport(to.getLocation());
     }
 
     /**
@@ -336,6 +352,7 @@ public class TeleportPlayer implements Serializable {
      * the handle of the player to which this object belongs
      */
     public TeleportPlayer(Player player) {
+        this.name = player.getName();
         this.world = player.getWorld().getName();
         this.toggle = Localization.getBoolean("teleport.toggle.default", false);
         setLastKnown(player.getLocation());
