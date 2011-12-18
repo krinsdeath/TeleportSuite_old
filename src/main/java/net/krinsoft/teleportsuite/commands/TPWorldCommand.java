@@ -48,7 +48,7 @@ public class TPWorldCommand extends TeleportCommand {
                 loc = world.getSpawnLocation();
                 setLastKnown(player, loc);
             }
-            plugin.getUsers().save();
+            plugin.saveUsers();
             player.teleport(loc);
             return;
         }
@@ -56,7 +56,7 @@ public class TPWorldCommand extends TeleportCommand {
 
     public void setLastKnown(Player p, Location l) {
         String location = (int)l.getX() + ":" + (int)l.getY() + ":" + (int)l.getZ();
-        plugin.getUsers().setProperty(p.getName() + "." + l.getWorld().getName(), location);
+        plugin.getUsers().set(p.getName() + "." + l.getWorld().getName(), location);
     }
 
     public Location getLastKnown(Player p, String world) {

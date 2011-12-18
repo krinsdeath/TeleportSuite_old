@@ -9,6 +9,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.config.Configuration;
 import com.pneumaticraft.commandhandler.CommandHandler;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -29,6 +30,8 @@ import net.krinsoft.teleportsuite.commands.TPRequestsCommand;
 import net.krinsoft.teleportsuite.commands.TPToggleCommand;
 import net.krinsoft.teleportsuite.commands.TPWorldCommand;
 import org.bukkit.World;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 
@@ -41,8 +44,8 @@ public class TeleportSuite extends JavaPlugin {
 
     protected static PluginDescriptionFile pdf;
     protected static PluginManager pm;
-    protected static Configuration config;
-    protected static Configuration users;
+    protected static FileConfiguration config;
+    protected static FileConfiguration users;
     private final Players pListener = new Players();
     private final Entities eListener = new Entities();
     private double chVersion = 1;
@@ -106,9 +109,9 @@ public class TeleportSuite extends JavaPlugin {
     private void registerConfiguration() {
         pm = getServer().getPluginManager();
         pdf = getDescription();
-        config = getConfiguration();
-        users = new Configuration(new File(getDataFolder(), "users.yml"));
-        users.load();
+        config = getConfig();
+        users = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "users.yml"));
+        users.setDefaults(YamlConfiguration.loadConfiguration(new File(getDataFolder(), "users.yml")));
         Permission worlds = new Permission("teleport.world.*");
         worlds.setDefault(PermissionDefault.TRUE);
         if (pm.getPermission(worlds.getName()) == null) {
@@ -147,8 +150,8 @@ public class TeleportSuite extends JavaPlugin {
 
     private void setup() {
         if (!versionMatch() || config.getBoolean("plugin.rebuild", false)) {
-            if (config.getProperty("plugin.rebuild") == null) {
-                config.setProperty("plugin.rebuild", true);
+            if (config.get("plugin.rebuild") == null) {
+                config.set("plugin.rebuild", true);
             }
             if (config.getBoolean("plugin.rebuild", false)) {
                 System.out.println(pdf.getFullName() + " detected first run.");
@@ -175,9 +178,9 @@ public class TeleportSuite extends JavaPlugin {
                 config.getString("error.no_location", "&CYou haven't teleported yet.");
                 config.getString("error.params", "&CInvalid parameters.");
                 config.getString("error.destination", "&CInvalid destination.");
-                config.setProperty("plugin.rebuild", false);
+                config.set("plugin.rebuild", false);
                 config.getString("plugin.version", "1.0.0");
-                config.save();
+                saveConfig();
                 System.out.println("... done.");
             }
             if (!versionMatch()) {
@@ -190,10 +193,9 @@ public class TeleportSuite extends JavaPlugin {
                     System.out.println("You changed the version number. Some features may not be added.");
                 }
             }
-            config.setProperty("plugin.version", pdf.getVersion());
-            config.save();
+            config.set("plugin.version", pdf.getVersion());
+            saveConfig();
         }
-        config.load();
     }
 
     private boolean versionMatch() {
@@ -223,19 +225,27 @@ public class TeleportSuite extends JavaPlugin {
                     config.getString("message.location", "You are currently at (&b<x>&f, &b<y>&f, &b<z>&f) in &a<world>&f.");
                 }
                 if (fix >= 4 && f < fix) {
-                    config.setProperty("teleport.toggle.default", false);
+                    config.set("teleport.toggle.default", false);
                 }
             }
             if (rev == 1 && r == 0) {
-                config.setProperty("plugin.opfallback", false);
-                config.setProperty("plugin.version", pdf.getVersion());
+                config.set("plugin.opfallback", false);
+                config.set("plugin.version", pdf.getVersion());
                 System.out.println("Config updated to " + pdf.getVersion() + ". Finalizing...");
             }
         }
     }
 
-    public Configuration getUsers() {
+    public FileConfiguration getUsers() {
         return users;
+    }
+
+    public void saveUsers() {
+        try {
+            users.save(new File(this.getDataFolder(), "users.yml"));
+        } catch (IOException e) {
+            System.out.println(e.getLocalizedMessage());
+        }
     }
 
     public PermissionHandler getPermissionHandler() {

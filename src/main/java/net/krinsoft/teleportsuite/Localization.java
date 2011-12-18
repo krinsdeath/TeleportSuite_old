@@ -3,8 +3,8 @@ package net.krinsoft.teleportsuite;
 import java.util.List;
 import java.util.regex.Pattern;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.util.config.Configuration;
 
 /**
  *
@@ -12,10 +12,10 @@ import org.bukkit.util.config.Configuration;
  */
 public class Localization {
 
-    private static Configuration config;
+    private static FileConfiguration config;
     private final static Pattern COLOR = Pattern.compile("&([a-fA-f0-9])");
 
-    public static void setConfig(Configuration conf) {
+    public static void setConfig(FileConfiguration conf) {
         config = conf;
     }
 
@@ -44,7 +44,7 @@ public class Localization {
     }
 
     public static void message(String path, String rep, CommandSender p) {
-        Object obj = config.getProperty(path);
+        Object obj = config.get(path);
         if (obj == null) {
             return;
         } else if (obj instanceof String) {
