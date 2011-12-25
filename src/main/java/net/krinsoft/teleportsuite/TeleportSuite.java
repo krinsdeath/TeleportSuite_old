@@ -110,6 +110,7 @@ public class TeleportSuite extends JavaPlugin {
         pm = getServer().getPluginManager();
         pdf = getDescription();
         config = getConfig();
+        config.setDefaults(YamlConfiguration.loadConfiguration(new File(getDataFolder(), "config.yml")));
         users = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "users.yml"));
         users.setDefaults(YamlConfiguration.loadConfiguration(new File(getDataFolder(), "users.yml")));
         Permission worlds = new Permission("teleport.world.*");
@@ -154,85 +155,57 @@ public class TeleportSuite extends JavaPlugin {
                 config.set("plugin.rebuild", true);
             }
             if (config.getBoolean("plugin.rebuild", false)) {
-                System.out.println(pdf.getFullName() + " detected first run.");
-                System.out.println("Building configuration file...");
-                config.getString("teleport.message", "Teleporting to &a<player>&f...");
-                config.getString("teleport.notice", "&a<player>&f is teleporting to you.");
-                config.getString("teleport.request.from", "Teleport request from &a<player>&f. (Accept with &a/tpaccept <player>&f)");
-                config.getString("teleport.request.to", "Awaiting response from &a<player>&f...");
-                config.getString("teleport.toggle.allowed", "allowed");
-                config.getString("teleport.toggle.denied", "ignored");
-                config.getString("teleport.toggle.message", "Teleport requests will be <flag>.");
-                config.getString("request.none", "You have no request from &a<player>&f!");
-                config.getString("request.deny", "You denied &a<player>&f's teleport request.");
-                config.getString("request.denied", "&a<player>&f denied your teleport request.");
-                config.getString("request.only_one", "You can only request one teleport at a time.");
-                config.getString("request.ignored", "&a<player>&f is not allowing teleport requests.");
-                config.getString("request.open.header", "Open requests...");
-                config.getString("request.open.self", "Requesting teleport to: &a<player>&f");
-                config.getString("request.open.entry", "&a<player>&f");
-                config.getString("request.open.none", "You have no requests.");
-                config.getString("error.arguments", "&CNot enough arguments.");
-                config.getString("error.target", "&CInvalid target.");
-                config.getString("error.permission", "&CYou do not have permission for that.");
-                config.getString("error.no_location", "&CYou haven't teleported yet.");
-                config.getString("error.params", "&CInvalid parameters.");
-                config.getString("error.destination", "&CInvalid destination.");
+                if (config.getString("plugin.version") == null) {
+                    System.out.println(pdf.getFullName() + " detected first run.");
+                    System.out.println("Building configuration file...");
+                } else {
+                    System.out.println("Rebuilding configuration file...");
+                }
+                // teleport messages
+                config.set("teleport.message", "Teleporting to &a<player>&f...");
+                config.set("teleport.notice", "&a<player>&f is teleporting to you.");
+                config.set("teleport.request.from", "Teleport request from &a<player>&f. (Accept with &a/tpaccept <player>&f)");
+                config.set("teleport.request.to", "Awaiting response from &a<player>&f...");
+                config.set("teleport.toggle.allowed", "allowed");
+                config.set("teleport.toggle.denied", "ignored");
+                config.set("teleport.toggle.message", "Teleport requests will be <flag>.");
+                config.set("teleport.toggle.default", false);
+                // request messages
+                config.set("request.none", "You have no request from &a<player>&f!");
+                config.set("request.deny", "You denied &a<player>&f's teleport request.");
+                config.set("request.denied", "&a<player>&f denied your teleport request.");
+                config.set("request.only_one", "You can only request one teleport at a time.");
+                config.set("request.ignored", "&a<player>&f is not allowing teleport requests.");
+                config.set("request.open.header", "Open requests...");
+                config.set("request.open.self", "Requesting teleport to: &a<player>&f");
+                config.set("request.open.entry", "&a<player>&f");
+                config.set("request.open.none", "You have no requests.");
+                config.set("request.cancel", "You cancelled your teleport to &a<player>&f.");
+                config.set("request.cancelled", "&a<player>&f cancelled their teleport request.");
+                // error messages
+                config.set("error.arguments", "&CNot enough arguments.");
+                config.set("error.target", "&CInvalid target.");
+                config.set("error.permission", "&CYou do not have permission for that.");
+                config.set("error.no_location", "&CYou haven't teleported yet.");
+                config.set("error.params", "&CInvalid parameters.");
+                config.set("error.destination", "&CInvalid destination.");
+                config.set("error.invalid_world", "&CInvalid world");
+                // informational messages
+                config.set("message.location", "You are currently at (&b<x>&f, &b<y>&f, &b<z>&f) in &a<world>&f.");
                 config.set("plugin.rebuild", false);
-                config.getString("plugin.version", "1.0.0");
-                saveConfig();
+                config.set("plugin.version", pdf.getVersion());
                 System.out.println("... done.");
             }
-            if (!versionMatch()) {
-                try {
-                    int cf = Integer.parseInt(config.getString("plugin.version").split("\\.")[2]);
-                    int cr = Integer.parseInt(config.getString("plugin.version").split("\\.")[1]);
-                    int cv = Integer.parseInt(config.getString("plugin.version").split("\\.")[0]);
-                    update(cf, cr, cv);
-                } catch (NumberFormatException e) {
-                    System.out.println("You changed the version number. Some features may not be added.");
-                }
-            }
-            config.set("plugin.version", pdf.getVersion());
             saveConfig();
         }
     }
 
     private boolean versionMatch() {
+        if (config.getString("plugin.version") == null) { return false; }
         if (pdf.getVersion().equals(config.getString("plugin.version"))) {
             return true;
         } else {
             return false;
-        }
-    }
-
-    private void update(int f, int r, int v) {
-        System.out.println("Updating " + pdf.getFullName() + " to latest version.");
-        int fix = Integer.parseInt(pdf.getVersion().split("\\.")[2]);
-        int rev = Integer.parseInt(pdf.getVersion().split("\\.")[1]);
-        int ver = Integer.parseInt(pdf.getVersion().split("\\.")[0]);
-        if (ver == 1 && v <= ver) {
-            if (rev >= 0 && r <= rev) {
-                if (r == 0 && rev > 0) {
-                    fix = 10;
-                }
-                if (fix >= 1 && f < fix) {
-                    config.getString("request.cancel", "You cancelled your teleport to &a<player>&f.");
-                    config.getString("request.cancelled", "&a<player>&f cancelled their teleport request.");
-                }
-                if (fix >= 3 && f < fix) {
-                    config.getString("error.invalid_world", "&CInvalid world");
-                    config.getString("message.location", "You are currently at (&b<x>&f, &b<y>&f, &b<z>&f) in &a<world>&f.");
-                }
-                if (fix >= 4 && f < fix) {
-                    config.set("teleport.toggle.default", false);
-                }
-            }
-            if (rev == 1 && r == 0) {
-                config.set("plugin.opfallback", false);
-                config.set("plugin.version", pdf.getVersion());
-                System.out.println("Config updated to " + pdf.getVersion() + ". Finalizing...");
-            }
         }
     }
 

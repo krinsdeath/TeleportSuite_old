@@ -5,7 +5,7 @@
     <groupId>net.krinsoft</groupId>
     <artifactId>TeleportSuite</artifactId>
     <packaging>jar</packaging>
-    <version>1.1.6</version>
+    <version>1.2</version>
     <name>TeleportSuite</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -14,8 +14,8 @@
     <repositories>
         <!-- Multiverse Repository -->
         <repository>
-            <id>pneumaticsystem</id>
-            <url>http://pneumaticsystem.com:25578/nexus/content/groups/public</url>
+            <id>OnARandomBox</id>
+            <url>http://repo.onarandombox.com/artifactory/repo</url>
         </repository>
         <!-- End Multiverse -->
     </repositories>
