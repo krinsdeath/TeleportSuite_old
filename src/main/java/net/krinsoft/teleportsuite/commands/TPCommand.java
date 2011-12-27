@@ -1,7 +1,6 @@
 package net.krinsoft.teleportsuite.commands;
 
 import java.util.List;
-import net.krinsoft.teleportsuite.Localization;
 import net.krinsoft.teleportsuite.TeleportSuite;
 import net.krinsoft.teleportsuite.TeleportPlayer;
 import net.krinsoft.teleportsuite.TeleportPlayer.Priority;
@@ -19,9 +18,10 @@ public class TPCommand extends TeleportCommand {
     public TPCommand(TeleportSuite plugin) {
         super(plugin);
         this.setName("TeleportSuite TP");
-        this.setCommandUsage("/tp [player]");
-        this.addCommandExample("/tp Player");
-        this.setArgRange(1, 1);
+        this.setCommandUsage("/tp [player] [player]");
+        this.addCommandExample("/tp Player -- Teleport to Player");
+        this.addCommandExample("/tp Player1 Player2 -- Teleport Player1 to Player2");
+        this.setArgRange(1, 2);
         this.addKey("teleport tp");
         this.addKey("tps tp");
         this.addKey("tp");
@@ -30,7 +30,12 @@ public class TPCommand extends TeleportCommand {
 
     @Override
     public void runCommand(CommandSender sender, List<String> args) {
-        Player[] checked = check(sender, args.get(0));
+        Player[] checked = new Player[2];
+        if (args.size() == 2) {
+            checked = check(plugin.getServer().getPlayer(args.get(0)), args.get(1));
+        } else {
+            checked = check(sender, args.get(0));
+        }
         if (checked == null) {
             return;
         }

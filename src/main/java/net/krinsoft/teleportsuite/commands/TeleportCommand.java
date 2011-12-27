@@ -33,4 +33,12 @@ public abstract class TeleportCommand extends Command {
         }
         return checked;
     }
+
+    public int verifyWallet(CommandSender sender) {
+        if (plugin.economy) {
+            return 0;
+        } else {
+            return -1;
+        }
+    }
 }

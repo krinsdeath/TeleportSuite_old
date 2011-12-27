@@ -6,7 +6,6 @@ import org.bukkit.event.Event;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.util.config.Configuration;
 import com.pneumaticraft.commandhandler.CommandHandler;
 import java.io.File;
 import java.io.IOException;
@@ -41,6 +40,7 @@ import org.bukkit.permissions.PermissionDefault;
  * @version 1.1.0
  */
 public class TeleportSuite extends JavaPlugin {
+    private final static Logger LOGGER = Logger.getLogger("TeleportSuite");
 
     protected static PluginDescriptionFile pdf;
     protected static PluginManager pm;
@@ -51,6 +51,10 @@ public class TeleportSuite extends JavaPlugin {
     private double chVersion = 1;
     private CommandHandler commandHandler;
     private PermissionHandler permissionHandler;
+
+    // economy
+    public boolean economy = false;
+    //private AllPay allpay = null;
 
     @Override
     public void onEnable() {
@@ -67,16 +71,26 @@ public class TeleportSuite extends JavaPlugin {
         pm.registerEvent(Event.Type.PLAYER_QUIT, pListener, Event.Priority.Normal, this);
         pm.registerEvent(Event.Type.PLAYER_KICK, pListener, Event.Priority.Normal, this);
         pm.registerEvent(Event.Type.ENTITY_DEATH, eListener, Event.Priority.Normal, this);
-        System.out.println(pdf.getFullName() + " (by " + pdf.getAuthors().toString().replaceAll("([\\[\\]])", "") + ") is enabled.");
+        log("TeleportSuite by " + pdf.getAuthors().toString().replaceAll("([\\[\\]])", "") + ") is enabled.");
     }
 
     @Override
     public void onDisable() {
         TeleportPlayer.clean();
-        System.out.println(pdf.getFullName() + " (by " + pdf.getAuthors().toString().replaceAll("([\\[\\]])", "") + ") is disabled.");
+        log("TeleportSuite by " + pdf.getAuthors().toString().replaceAll("([\\[\\]])", "") + ") is disabled.");
         pm = null;
         pdf = null;
         config = null;
+    }
+
+    public void log(String message) {
+        message = "[" + this + "] " + message;
+        LOGGER.info(message);
+    }
+
+    public void warn(String message) {
+        message = "[" + this + "] " + message;
+        LOGGER.warning(message);
     }
 
     @Override
@@ -93,16 +107,16 @@ public class TeleportSuite extends JavaPlugin {
             if (this.commandHandler.getVersion() >= chVersion) {
                 return true;
             } else {
-                log.warning("A plugin with an outdated version of CommandHandler initialized before " + this + ".");
-                log.warning(this + " needs CommandHandler v" + chVersion + " or higher, but CommandHandler v" + commandHandler.getVersion() + " was detected.");
-                log.warning("Nag the authors of the following plugins: ");
+                warn("A plugin with an outdated version of CommandHandler initialized before " + this + ".");
+                warn(this + " needs CommandHandler v" + chVersion + " or higher, but CommandHandler v" + commandHandler.getVersion() + " was detected.");
+                warn("Nag the authors of the following plugins: ");
                 return false;
             }
         } catch (Throwable t) {
         }
-        log.warning("A plugin with an outdated version of CommandHandler initialized before " + this + ".");
-        log.warning(this + " needs CommandHandler v" + chVersion + " or higher, but CommandHandler v" + commandHandler.getVersion() + " was detected.");
-        log.warning("Nag the authors of the following plugins: ");
+        warn("A plugin with an outdated version of CommandHandler initialized before " + this + ".");
+        warn(this + " needs CommandHandler v" + chVersion + " or higher, but CommandHandler v" + commandHandler.getVersion() + " was detected.");
+        warn("Nag the authors of the following plugins: ");
         return false;
     }
 
@@ -150,16 +164,28 @@ public class TeleportSuite extends JavaPlugin {
     }
 
     private void setup() {
+        // header
+        config.options().header(
+                "Messages:\n" +
+                "  Each message can be customized to your liking.\n" +
+                "  Any message left blank will not be relayed.\n" +
+                "  I recommend leaving error messages as they are.\n" +
+                "---\n" +
+                "Economy:\n" +
+                "  Type: An item ID, or -1 for a currency plugin (default: red rose)\n" +
+                "  Amount: The amount of [type] required (default: 1)\n" +
+                "---"
+                );
         if (!versionMatch() || config.getBoolean("plugin.rebuild", false)) {
             if (config.get("plugin.rebuild") == null) {
                 config.set("plugin.rebuild", true);
             }
             if (config.getBoolean("plugin.rebuild", false)) {
                 if (config.getString("plugin.version") == null) {
-                    System.out.println(pdf.getFullName() + " detected first run.");
-                    System.out.println("Building configuration file...");
+                    log(pdf.getFullName() + " detected first run.");
+                    log("Building configuration file...");
                 } else {
-                    System.out.println("Rebuilding configuration file...");
+                    log("Rebuilding configuration file...");
                 }
                 // teleport messages
                 config.set("teleport.message", "Teleporting to &a<player>&f...");
@@ -194,19 +220,28 @@ public class TeleportSuite extends JavaPlugin {
                 config.set("message.location", "You are currently at (&b<x>&f, &b<y>&f, &b<z>&f) in &a<world>&f.");
                 config.set("plugin.rebuild", false);
                 config.set("plugin.version", pdf.getVersion());
-                System.out.println("... done.");
+                log("... done.");
             }
-            saveConfig();
         }
+        if (!economyMatch()) {
+            config.set("economy.use", false);
+            config.set("economy.type", "38");
+            config.set("economy.amount", 1);
+        }
+        saveConfig();
+        economy = config.getBoolean("economy.use");
     }
 
     private boolean versionMatch() {
         if (config.getString("plugin.version") == null) { return false; }
         if (pdf.getVersion().equals(config.getString("plugin.version"))) {
             return true;
-        } else {
-            return false;
         }
+        return false;
+    }
+
+    private boolean economyMatch() {
+        return (config.get("economy.use") == null);
     }
 
     public FileConfiguration getUsers() {
