@@ -13,10 +13,14 @@ import org.bukkit.entity.Player;
 public abstract class TeleportCommand extends Command {
 
     protected TeleportSuite plugin;
+    protected int currencyType;
+    protected double currencyAmount;
 
     public TeleportCommand(TeleportSuite plugin) {
         super(plugin);
         this.plugin = (TeleportSuite) plugin;
+        this.currencyType = plugin.getConfig().getInt("economy.type");
+        this.currencyAmount = plugin.getConfig().getDouble("economy.amount");
     }
 
     public Player[] check(CommandSender sender, String target) {
@@ -34,11 +38,4 @@ public abstract class TeleportCommand extends Command {
         return checked;
     }
 
-    public int verifyWallet(CommandSender sender) {
-        if (plugin.economy) {
-            return 0;
-        } else {
-            return -1;
-        }
-    }
 }

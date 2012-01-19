@@ -7,6 +7,8 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import com.pneumaticraft.commandhandler.CommandHandler;
+import com.fernferret.allpay.AllPay;
+import com.fernferret.allpay.GenericBank;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -48,20 +50,27 @@ public class TeleportSuite extends JavaPlugin {
     protected static FileConfiguration users;
     private final Players pListener = new Players();
     private final Entities eListener = new Entities();
-    private double chVersion = 1;
     private CommandHandler commandHandler;
     private PermissionHandler permissionHandler;
 
     // economy
     public boolean economy = false;
-    //private AllPay allpay = null;
+    private GenericBank bank = null;
 
     @Override
     public void onEnable() {
+        // validate that command handler is up to date
         if (!validateCommandHandler()) {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
+        // validate that allpay is all up to date
+        if (validateAllPay()) {
+            // success!
+            log("Economy successfully hooked.");
+            return;
+        }
+        
         registerConfiguration();
         registerCommands();
         Localization.setConfig(config);
@@ -101,7 +110,7 @@ public class TeleportSuite extends JavaPlugin {
     }
 
     private boolean validateCommandHandler() {
-        Logger log = Logger.getLogger("TeleportSuite");
+        double chVersion = 1;
         try {
             commandHandler = new CommandHandler(this, null);
             if (this.commandHandler.getVersion() >= chVersion) {
@@ -113,11 +122,11 @@ public class TeleportSuite extends JavaPlugin {
                 return false;
             }
         } catch (Throwable t) {
+            warn("A plugin with an outdated version of CommandHandler initialized before " + this + ".");
+            warn(this + " needs CommandHandler v" + chVersion + " or higher, but CommandHandler v" + commandHandler.getVersion() + " was detected.");
+            warn("Nag the authors of the following plugins: ");
+            return false;
         }
-        warn("A plugin with an outdated version of CommandHandler initialized before " + this + ".");
-        warn(this + " needs CommandHandler v" + chVersion + " or higher, but CommandHandler v" + commandHandler.getVersion() + " was detected.");
-        warn("Nag the authors of the following plugins: ");
-        return false;
     }
 
     private void registerConfiguration() {
@@ -230,14 +239,13 @@ public class TeleportSuite extends JavaPlugin {
         }
         saveConfig();
         economy = config.getBoolean("economy.use");
+        if (economy && validateAllPay()) {
+            log("TeleportSuite detected '" + bank.getEconUsed() + "'... hooking.");
+        }
     }
 
     private boolean versionMatch() {
-        if (config.getString("plugin.version") == null) { return false; }
-        if (pdf.getVersion().equals(config.getString("plugin.version"))) {
-            return true;
-        }
-        return false;
+        return (config.getString("plugin.version") == null || pdf.getVersion().equals(config.getString("plugin.version")));
     }
 
     private boolean economyMatch() {
@@ -258,5 +266,19 @@ public class TeleportSuite extends JavaPlugin {
 
     public PermissionHandler getPermissionHandler() {
         return this.permissionHandler;
+    }
+
+    private boolean validateAllPay() {
+        double allpayVersion = 3;
+        AllPay allpay = new AllPay(this, "[" + this + "] ");
+        if (allpay.getVersion() >= allpayVersion) {
+            this.bank = allpay.loadEconPlugin();
+            return true;
+        }
+        return false;
+    }
+    
+    public GenericBank getBank() {
+        return this.bank;
     }
 }

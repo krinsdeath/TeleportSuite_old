@@ -18,10 +18,7 @@ public class PermissionHandler implements PermissionsInterface {
 
     public boolean canEnterWorld(CommandSender sender, String world) {
         String worldNode = "teleport.world." + world;
-        if (hasPermission(sender, worldNode, false) || hasPermission(sender, "multiverse.access." + world, false)) {
-            return true;
-        }
-        return false;
+        return hasPermission(sender, worldNode, false);
     }
 
     public boolean hasPermission(CommandSender sender, String node, boolean isOpRequired) {

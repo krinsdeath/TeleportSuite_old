@@ -1,12 +1,12 @@
 package net.krinsoft.teleportsuite;
 
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import org.bukkit.Location;
-import org.bukkit.Server;
-import org.bukkit.entity.Player;
 
 /**
  *
@@ -17,24 +17,24 @@ public class TeleportPlayer implements Serializable {
     public enum Teleport {
 
         TO,
-        HERE;
+        HERE
     }
 
     public enum Priority {
 
         REQUEST,
         COMMAND,
-        OVERRIDE;
+        OVERRIDE
     }
     private final static long serialVersionUID = 991L;
     public static HashMap<String, TeleportPlayer> players = new HashMap<String, TeleportPlayer>();
     public static HashMap<String, Request> active = new HashMap<String, Request>();
     public static List<String> requesting = new ArrayList<String>();
-    protected static Server server;
+    protected static TeleportSuite plugin;
 
     protected static void init(TeleportSuite inst) {
-        server = inst.getServer();
-        for (Player p : server.getOnlinePlayers()) {
+        plugin = inst;
+        for (Player p : plugin.getServer().getOnlinePlayers()) {
             addPlayer(p);
         }
     }
@@ -43,7 +43,6 @@ public class TeleportPlayer implements Serializable {
         players = null;
         active = null;
         requesting = null;
-        server = null;
     }
 
     /**
@@ -85,6 +84,18 @@ public class TeleportPlayer implements Serializable {
         requesting.remove(name);
     }
 
+    public static boolean verifyWallet(Player player) {
+        double amount = plugin.getConfig().getDouble("economy.amount");
+        int type = plugin.getConfig().getInt("economy.type");
+        if (plugin.economy) {
+            if (plugin.getBanker().hasEnough(player, amount, type)) {
+                plugin.getBanker().pay(player, amount, type);
+                return true;
+            }
+            return false;
+        }
+        return true;
+    }
     /**
      * Toggles the requests feature for the specified player
      * @param player
@@ -112,18 +123,20 @@ public class TeleportPlayer implements Serializable {
             // there's a request! let's check how it should be handled
             if (active.containsKey(to.getName())) {
                 Request t = active.get(to.getName());
-                if (t.getType() == Teleport.HERE) {
-                    accept.setLastKnown(from.getLocation());
-                    Localization.message("teleport.message", to.getName(), from);
-                    Localization.message("teleport.notice", from.getName(), to);
-                    from.teleport(to.getLocation());
-                    accept.finish(to.getName());
-                } else if (t.getType() == Teleport.TO) {
-                    getPlayer(to).setLastKnown(to.getLocation());
-                    Localization.message("teleport.message", from.getName(), to);
-                    Localization.message("teleport.notice", to.getName(), from);
-                    to.teleport(from.getLocation());
-                    getPlayer(to).finish(from.getName());
+                if (verifyWallet(from)) {
+                    if (t.getType() == Teleport.HERE) {
+                        accept.setLastKnown(from.getLocation());
+                        Localization.message("teleport.message", to.getName(), from);
+                        Localization.message("teleport.notice", from.getName(), to);
+                        from.teleport(to.getLocation());
+                        accept.finish(to.getName());
+                    } else if (t.getType() == Teleport.TO) {
+                        getPlayer(to).setLastKnown(to.getLocation());
+                        Localization.message("teleport.message", from.getName(), to);
+                        Localization.message("teleport.notice", to.getName(), from);
+                        to.teleport(from.getLocation());
+                        getPlayer(to).finish(from.getName());
+                    }
                 }
                 accept.finish(to.getName());
                 active.remove(to.getName());
@@ -146,19 +159,16 @@ public class TeleportPlayer implements Serializable {
      */
     public static void acceptFirst(Player player) {
         if (TeleportPlayer.getPlayer(player).requests().isEmpty()) {
-            return;
         } else {
-            accept(player, server.getPlayer(getPlayer(player).requests().get(0)));
+            accept(player, plugin.getServer().getPlayer(getPlayer(player).requests().get(0)));
         }
     }
 
     public static void acceptAll(Player player) {
-        if (getPlayer(player).requests().isEmpty()) {
-            return;
-        } else {
+        if (!getPlayer(player).requests().isEmpty()) {
             List<String> requests = new ArrayList<String>(getPlayer(player).requests());
             for (String r : requests) {
-                accept(player, server.getPlayer(r));
+                accept(player, plugin.getServer().getPlayer(r));
             }
         }
     }
@@ -180,7 +190,6 @@ public class TeleportPlayer implements Serializable {
             to.sendMessage(Localization.getString("request.denied", from.getName()));
             getPlayer(from).finish(to.getName());
             requesting.remove(to.getName());
-            return;
         } else {
             from.sendMessage(Localization.getString("request.none", from.getName()));
         }
@@ -193,20 +202,16 @@ public class TeleportPlayer implements Serializable {
      * the handle of the player who is rejecting the request
      */
     public static void rejectFirst(Player player) {
-        if (TeleportPlayer.getPlayer(player).requests().isEmpty()) {
-            return;
-        } else {
-            reject(player, server.getPlayer(getPlayer(player).requests().get(0)));
+        if (!TeleportPlayer.getPlayer(player).requests().isEmpty()) {
+            reject(player, plugin.getServer().getPlayer(getPlayer(player).requests().get(0)));
         }
     }
 
     public static void rejectAll(Player player) {
-        if (getPlayer(player).requests().isEmpty()) {
-            return;
-        } else {
+        if (!getPlayer(player).requests().isEmpty()) {
             List<String> requests = new ArrayList<String>(getPlayer(player).requests());
             for (String r : requests) {
-                reject(player, server.getPlayer(r));
+                reject(player, plugin.getServer().getPlayer(r));
             }
         }
     }
@@ -237,15 +242,9 @@ public class TeleportPlayer implements Serializable {
             from.sendMessage(Localization.getString("request.only_one", ""));
         } else {
             if (getPlayer(to).isToggled()) {
-                if (priority == Priority.OVERRIDE) {
-                    active.put(from.getName(), new Request(to.getName(), type));
-                    getPlayer(to).request(from.getName());
-                    accept(to, from);
-                } else {
-                    from.sendMessage(Localization.getString("request.ignored", to.getName()));
-                }
+                from.sendMessage(Localization.getString("request.ignored", to.getName()));
             } else {
-                if (priority == Priority.COMMAND || priority == Priority.OVERRIDE) {
+                if (priority == Priority.COMMAND) {
                     active.put(from.getName(), new Request(to.getName(), type));
                     getPlayer(to).request(from.getName());
                     accept(to, from);
@@ -379,15 +378,13 @@ public class TeleportPlayer implements Serializable {
      * (whichever is newer)
      */
     public Location getLastKnown() {
-        return new Location(server.getWorld(world), x, y, z, yaw, pitch);
+        return new Location(plugin.getServer().getWorld(world), x, y, z, yaw, pitch);
     }
 
     /**
      * Returns the player's toggle status
      * @return true
      * the player is rejecting requests
-     * @return false
-     * the player is accepting requests
      */
     public boolean isToggled() {
         return this.toggle;
@@ -399,18 +396,16 @@ public class TeleportPlayer implements Serializable {
     public void toggle() {
         if (toggle) {
             this.toggle = false;
-            rejectAll(server.getPlayer(this.name));
-            return;
+            rejectAll(plugin.getServer().getPlayer(this.name));
         } else {
             this.toggle = true;
-            return;
         }
     }
 
     /**
      * Fetches a list of player names that are queued for requests
      * @return
-     * the player's names
+     * the player's requests, by name
      */
     public List<String> requests() {
         return this.requests;
@@ -418,12 +413,10 @@ public class TeleportPlayer implements Serializable {
 
     /**
      * Checks whether this player has a queued request from the specified player
-     * @param p
+     * @param player
      * The player handle to check
      * @return true
      * the player has a request from the provided player
-     * @return false
-     * the player has no such request
      */
     public boolean hasRequest(String player) {
         return this.requests.contains(player);
@@ -431,7 +424,7 @@ public class TeleportPlayer implements Serializable {
 
     /**
      * Adds a request from the specified player to this player's request queue
-     * @param p
+     * @param from
      * The player to add to the request queue
      */
     public void request(String from) {

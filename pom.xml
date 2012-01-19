@@ -14,7 +14,7 @@
     <repositories>
         <!-- Multiverse Repository -->
         <repository>
-            <id>OnARandomBox</id>
+            <id>onarandombox</id>
             <url>http://repo.onarandombox.com/content/groups/public/</url>
         </repository>
         <!-- End Multiverse -->
@@ -69,7 +69,7 @@
                         </goals>
                         <configuration>
                             <sources>
-                                <source>${basedir}/lib/allpay/src/</source>
+                                <source>${basedir}/lib/allpay/src/main/java/</source>
                                 <source>${basedir}/lib/commandhandler/src/</source>
                                 <source>${basedir}/lib/commandhandler/lib/ShellParser/src/</source>
                             </sources>
@@ -116,7 +116,7 @@
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
-            <version>1.0.0-R1-SNAPSHOT</version>
+            <version>1.0.1-R2-SNAPSHOT</version>
             <type>jar</type>
         </dependency>
         <!-- End Bukkit -->

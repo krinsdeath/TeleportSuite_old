@@ -55,7 +55,7 @@ public class TPWorldCommand extends TeleportCommand {
     }
 
     public void setLastKnown(Player p, Location l) {
-        String location = (int)l.getX() + ":" + (int)l.getY() + ":" + (int)l.getZ();
+        String location = l.getX() + ":" + l.getY() + ":" + l.getZ();
         plugin.getUsers().set(p.getName() + "." + l.getWorld().getName(), location);
     }
 
@@ -63,9 +63,10 @@ public class TPWorldCommand extends TeleportCommand {
         String loc = plugin.getUsers().getString(p.getName() + "." + world);
         double[] place = new double[3];
         try {
-            place[0] = Integer.parseInt(loc.split(":")[0]) + 0.5;
-            place[1] = Integer.parseInt(loc.split(":")[1]) + 0.1;
-            place[2] = Integer.parseInt(loc.split(":")[2]) + 0.5;
+            String[] locs = loc.split(":");
+            place[0] = Double.parseDouble(locs[0]);
+            place[1] = Double.parseDouble(locs[1]);
+            place[2] = Double.parseDouble(locs[2]);
         } catch (NumberFormatException e) {
             System.out.println(e.getLocalizedMessage());
             return null;

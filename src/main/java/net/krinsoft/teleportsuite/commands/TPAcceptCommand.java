@@ -35,14 +35,12 @@ public class TPAcceptCommand extends TeleportCommand {
         }
         if (args.isEmpty()) {
             TeleportPlayer.acceptFirst((Player) sender);
-            return;
         } else {
             if (args.get(0).startsWith("--a")) {
                 TeleportPlayer.acceptAll((Player) sender);
                 return;
             }
             TeleportPlayer.accept((Player) sender, plugin.getServer().getPlayer(args.get(0)));
-            return;
         }
     }
 }
