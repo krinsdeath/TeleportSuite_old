@@ -88,8 +88,8 @@ public class TeleportPlayer implements Serializable {
         double amount = plugin.getConfig().getDouble("economy.amount");
         int type = plugin.getConfig().getInt("economy.type");
         if (plugin.economy) {
-            if (plugin.getBanker().hasEnough(player, amount, type)) {
-                plugin.getBanker().pay(player, amount, type);
+            if (plugin.getBank().hasEnough(player, amount, type)) {
+                plugin.getBank().pay(player, amount, type);
                 return true;
             }
             return false;
